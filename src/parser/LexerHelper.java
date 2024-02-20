@@ -21,11 +21,20 @@ public class LexerHelper {
 		return -1;
 	}
 
-	public static Object lexemeToChar(String text) {
-
-		return -1;
+	public static char lexemeToChar(String str) {
+		if (str.equals("'\\n'")) {
+			return '\n';
+		} else if (str.equals("'\\t'")) {
+			return '\t';
+		} else if (str.charAt(1) == '\\') {
+			try {
+				return (char) Integer.parseInt(str.substring(2, str.length() - 1));
+			} catch (NumberFormatException e) {
+				System.out.println(e);
+			}
+		}
+		return str.charAt(1);
 	}
 
-	// TODO: Implement the lexemeToChar and lexemeToReal methods
 	
 }

@@ -1,7 +1,55 @@
 grammar Cmm;	
 
-program: INT_CONSTANT
-       ;
+expression: ID
+        | INT_CONSTANT
+        | DOUBLE_CONSTANT
+        | CHAR_CONSTANT
+        | '(' expression ')'
+        | expression '.' ID
+        | expression ('*'|'/') expression
+        | expression ('+'|'-') expression
+        | expression ('&&'|'||') expression
+        | expression '[' expression ']'
+        | '-' expression
+        | '!' expression
+        | expression ('>'|'>='|'=='|'<='|'<'|'!=') expression
+        | ID '(' params? ')'
+        //| '(' type ')' expression
+        ;
+
+statement:'if' '(' expression ')' block ('else' block)?
+        | ID '(' params? ')' ';'
+        | expression '=' expression ';'
+        | 'write' '(' params ')' ';'
+        | 'read' '(' params ')' ';'
+        | 'while' '(' expression ')' block
+        | 'return' expression ';'
+        ;
+
+type: builtInType'[' INT_CONSTANT ']'
+        | 'struct' '{' (varDefinition ';' )* '}' ID
+        | builtInType
+        ;
+builtInType:'char'
+           | 'int'
+           | 'double'
+           ;
+returnType: builtInType|'void';
+
+definition: varDefinition
+        | returnType ID '(' (varDefinition (',' varDefinition)*)? ')' block
+        ;
+
+params:(expression (',' expression)*)
+    ;
+
+varDefinition: type ID
+        ;
+
+block: statement*
+        | '{' statement* '}'
+        ;
+
 
 fragment
 LETTER: [a-zA-Z]
@@ -27,7 +75,7 @@ MULTIPLE_LINE_COMMENT:'/''*' (.*)? '*''/' (NEW_LINE|'EOF')
 fragment
 TABULAR: ('\t')
     ;
-  		 
+
 INT_CONSTANT: '0'
     | [1-9] DIGIT*
     ;
