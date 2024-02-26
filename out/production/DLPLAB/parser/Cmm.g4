@@ -1,45 +1,59 @@
 grammar Cmm;	
 
+// -------- program --------
+program: ( definition )*
+        ;
+definition: varDefinition
+        | returnType ID '(' (type ID (',' type ID)*)? ')' '{' funcBlock '}'
+        ;
+varDefinition: type ID (',' ID)* ';'
+        ;
+funcBlock: (varDefinition | statement)* ('return' expression ';')?
+        ;
+
+// -------- expression --------
 expression: ID
         | INT_CONSTANT
         | DOUBLE_CONSTANT
         | CHAR_CONSTANT
         | '(' expression ')'
         | expression '.' ID
-        | expression ('*'|'/') expression
+        | expression ('*'|'/'|'%') expression
         | expression ('+'|'-') expression
         | expression ('&&'|'||') expression
         | expression '[' expression ']'
         | '-' expression
         | '!' expression
         | expression ('>'|'>='|'=='|'<='|'<'|'!=') expression
-        | ID '(' (expression|(expression ',')* expression)? ')'
-        //| '(' type ')' expression
+        | ID '(' params? ')'
+        | '(' builtInType ')' expression
         ;
 
+// -------- statement --------
 statement:'if' '(' expression ')' block ('else' block)?
-        | ID '(' (expression|(expression ',')* expression)? ')' ';'
+        | ID '(' params? ')' ';'
         | expression '=' expression ';'
-        | 'write' '(' (expression|(expression ',')* expression) ')' ';'
-        | 'read' '(' (expression|(expression ',')* expression) ')' ';'
+        | 'write'  params  ';'
+        | 'read'  params  ';'
         | 'while' '(' expression ')' block
         | 'return' expression ';'
         ;
-
-type: 'char'
-        | 'int'
-        | 'double'
-        | type'[]'
-        | 'struct' ID '{' varDefinition* '}'
-        ;
-
-varDefinition: type ID ';'
-        ;
-
+params:(expression (',' expression)*)
+    ;
 block: statement*
         | '{' statement* '}'
         ;
 
+// -------- type --------
+type: builtInType'[' INT_CONSTANT ']'
+        | 'struct' '{' (varDefinition  )* '}' ID
+        | builtInType
+        ;
+builtInType:'char'
+           | 'int'
+           | 'double'
+           ;
+returnType: builtInType|'void';
 
 fragment
 LETTER: [a-zA-Z]
@@ -57,10 +71,10 @@ fragment
 NEW_LINE: '\n' | '\r' | '\r' '\n'
     ;
 fragment
-ONE_LINE_COMMENT: '/''/' (.*)? (NEW_LINE|'EOF')
+ONE_LINE_COMMENT: '//' .*? (NEW_LINE|EOF)
     ;
 fragment
-MULTIPLE_LINE_COMMENT:'/''*' (.*)? '*''/' (NEW_LINE|'EOF')
+MULTIPLE_LINE_COMMENT:'/''*' .*? '*''/' (NEW_LINE|EOF)
     ;
 fragment
 TABULAR: ('\t')
@@ -76,6 +90,8 @@ DOUBLE_CONSTANT: DIGIT* '.' DIGIT* (('e'|'E') SIGN? INT_CONSTANT)?
     ;
 CHAR_CONSTANT: '\'' . '\''
     | '\'' '\\' INT_CONSTANT '\''
+    | '\'\\n\''
+    | '\'\\t\''
     ;
 WS: (NEW_LINE|ONE_LINE_COMMENT|WHITE_SPACES|TABULAR|MULTIPLE_LINE_COMMENT)+ -> skip
     ;
