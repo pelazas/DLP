@@ -12,8 +12,8 @@ public class FunctionInvocation extends AbstractExpression implements Statement 
     List<Expression> expressions;
     private Variable variable;
 
-    public FunctionInvocation(int line, int column, Type type, List<Expression> expressions, Variable variable) {
-        super(line, column, type);
+    public FunctionInvocation(int line, int column, List<Expression> expressions, Variable variable) {
+        super(line, column);
         this.expressions = expressions;
         this.variable = variable;
     }

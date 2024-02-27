@@ -1,3 +1,6 @@
+import ast.Program;
+import introspector.model.IntrospectorModel;
+import introspector.view.IntrospectorView;
 import parser.*;
 
 import org.antlr.v4.runtime.*;
@@ -14,7 +17,7 @@ public class Main {
 		CharStream input = CharStreams.fromFileName(args[0]);
 		CmmLexer lexer = new CmmLexer(input);
 
-
+/*
 		Token token;
 		// System.out.println(lexer.nextToken().getType());
 		while ((token = lexer.nextToken()).getType() != CmmLexer.EOF) {
@@ -40,13 +43,16 @@ public class Main {
 					token.getText(), lexer.getVocabulary()
 							.getDisplayName(token.getType()),
 					semanticValue);
-		}
+		}*/
 
 
 		// create a parser that feeds off the tokens buffer
 		CommonTokenStream tokens = new CommonTokenStream(lexer); 
 		CmmParser parser = new CmmParser(tokens);	
-		parser.program();		
+		Program ast = parser.program().ast;
+
+		IntrospectorModel model=new IntrospectorModel("Program", ast);
+		new IntrospectorView("Introspector", model);
 	}
 	
 

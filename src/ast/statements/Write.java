@@ -3,11 +3,13 @@ package ast.statements;
 
 import ast.expressions.Expression;
 
+import java.util.List;
+
 public class Write extends AbstractStatement{
-    private Expression expression;
-    public Write(int line, int column, Expression expression) {
+    private List<Expression> expressions;
+    public Write(int line, int column, List<Expression> expressions) {
         super(line, column);
-        this.expression = expression;
+        this.expressions = expressions;
 
     }
 }

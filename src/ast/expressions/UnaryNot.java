@@ -7,8 +7,8 @@ import ast.types.Type;
 public class UnaryNot extends AbstractExpression {
     private Expression expression;
 
-    public UnaryNot(int line, int column, Type type, Expression expression) {
-        super(line, column, type);
+    public UnaryNot(int line, int column, Expression expression) {
+        super(line, column);
         this.expression = expression;
     }
 }

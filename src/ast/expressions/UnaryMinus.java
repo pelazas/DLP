@@ -6,8 +6,8 @@ import ast.types.Type;
 
 public class UnaryMinus extends AbstractExpression {
     private Expression expression;
-    public UnaryMinus(int line, int column, Type type, Expression expression) {
-        super(line, column, type);
+    public UnaryMinus(int line, int column, Expression expression) {
+        super(line, column);
         this.expression = expression;
     }
 }

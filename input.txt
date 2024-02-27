@@ -50,4 +50,3 @@ void main() {
   vector[9][(int)4.3]=5;
   f(1, 2.2);
 }
-
