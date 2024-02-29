@@ -9,16 +9,18 @@ grammar Cmm;
 }
 
 // -------- program --------
-program: ( definition )*
+program returns [Program ast]:
+    // main function
+         ( definition )* EOF
         ;
 definition returns [Definition ast]:
-          v1=varDefinition {$ast = $v1.ast;}
+          v1=varDefinitions {$ast = $v1.ast;}
         | builtInType ID '(' (type ID (',' type ID)*)? ')' '{' funcBlock '}'
         ;
-varDefinition returns [Definition ast]:
+varDefinitions returns [List<Definition> ast]:
          t1=type ID (',' ID)* ';'
         ;
-funcBlock: (varDefinition | statement)* ('return' expression ';')?
+funcBlock: (varDefinitions | statement)* ('return' expression ';')?
         ;
 
 // -------- expression --------
