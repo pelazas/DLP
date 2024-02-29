@@ -4,8 +4,8 @@ import ast.types.Type;
 
 public class DoubleLiteral extends AbstractExpression{
     private double value;
-    public DoubleLiteral(int line, int column, Type type, double value) {
-        super(line, column, type);
+    public DoubleLiteral(int line, int column, double value) {
+        super(line, column);
         this.value = value;
     }
 }

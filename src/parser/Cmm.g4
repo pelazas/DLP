@@ -1,59 +1,84 @@
 grammar Cmm;	
 
+@header {
+    import ast.*;
+    import ast.definitions.*;
+    import ast.expressions.*;
+    import ast.statements.*;
+    import ast.types.*;
+}
+
 // -------- program --------
 program: ( definition )*
         ;
-definition: varDefinition
-        | returnType ID '(' (type ID (',' type ID)*)? ')' '{' funcBlock '}'
+definition returns [Definition ast]:
+          v1=varDefinition {$ast = $v1.ast;}
+        | builtInType ID '(' (type ID (',' type ID)*)? ')' '{' funcBlock '}'
         ;
-varDefinition: type ID (',' ID)* ';'
+varDefinition returns [Definition ast]:
+         t1=type ID (',' ID)* ';'
         ;
 funcBlock: (varDefinition | statement)* ('return' expression ';')?
         ;
 
 // -------- expression --------
-expression: ID
-        | INT_CONSTANT
-        | DOUBLE_CONSTANT
-        | CHAR_CONSTANT
-        | '(' expression ')'
-        | expression '.' ID
-        | expression ('*'|'/'|'%') expression
-        | expression ('+'|'-') expression
-        | expression ('&&'|'||') expression
-        | expression '[' expression ']'
-        | '-' expression
-        | '!' expression
-        | expression ('>'|'>='|'=='|'<='|'<'|'!=') expression
-        | ID '(' params? ')'
-        | '(' builtInType ')' expression
+expression returns [Expression ast]:
+          ID { $ast = new Variable($ID.getLine(),$ID.getCharPositionInLine()+1,$ID.text); }
+        | i=INT_CONSTANT {$ast = new IntLiteral($i.getLine(),$i.getCharPositionInLine()+1, LexerHelper.lexemeToInt($i.text)); }
+        | d=DOUBLE_CONSTANT { $ast = new DoubleLiteral($d.getLine(),$d.getCharPositionInLine()+1, LexerHelper.lexemeToReal($d.text));}
+        | c=CHAR_CONSTANT { $ast = new CharacterLiteral($c.getLine(),$c.getCharPositionInLine()+1, LexerHelper.lexemeToChar($c.text));}
+        | '(' e1=expression ')' { $ast = $e1.ast; }
+        | e1=expression '.' ID {$ast = new FieldAccess($e1.ast.getLine(), $e1.ast.getColumn(), $ID.text, $e1.ast);}
+        | e1=expression ('*'|'/'|'%') e2=expression {$ast = new Arithmetic($e1.ast.getLine(), $e1.ast.getColumn(), $op.text, $e1.ast, $e2.ast );}
+        | e1=expression op=('+'|'-') e2=expression { $ast = new Arithmetic($e1.ast.getLine(), $e1.ast.getColumn(), $op.text, $e1.ast, $e2.ast );}
+        | e1=expression op=('&&'|'||') e2=expression { $ast = new LogicalOperator($e1.ast.getLine(), $e1.ast.getColumn(), $op.text, $e1.ast, $e2.ast );}
+        | e1=expression '[' e2=expression ']' { $ast = new Indexing($e1.ast.getLine(), $e1.ast.getColumn(), $e1.ast, $e2.ast);}
+        | op='-' e1=expression { $ast = new UnaryMinus($op.getLine(), $op.getCharPositionInLine()+1,$e1.ast);}
+        | op='!' e1=expression {$ast = new UnaryNot($op.getLine(), $op.getCharPositionInLine()+1, $e1.ast);}
+        | e1=expression op=('>'|'>='|'=='|'<='|'<'|'!=') e2=expression {$ast = new Comparison($e1.ast.getLine(), $e1.ast.getColumn(), $op.text, $e1.ast, $e2.ast);}
+        | ID '(' arguments ')' {$ast =
+            new FunctionInvocation($ID.getLine(), $ID.getCharPositionInLine()+1, $arguments.ast, new Variable($ID.getLine(), $ID.getCharPositionInLine()+1,$ID.text));}
+        | lp='(' t1=builtInType ')' e1=expression {$ast = new Cast($lp.getLine(), $lp.getCharPositionInLine()+1,$e1.ast,$t1.ast);}
         ;
 
 // -------- statement --------
-statement:'if' '(' expression ')' block ('else' block)?
-        | ID '(' params? ')' ';'
-        | expression '=' expression ';'
-        | 'write'  params  ';'
-        | 'read'  params  ';'
-        | 'while' '(' expression ')' block
-        | 'return' expression ';'
+statement returns [Statement ast]:
+         if='if' '(' e1=expression ')' b1=block {$ast = new IfElse($if.getLine(), $if.getCharPositionInLine()+1, $e1.ast, $b1.ast);}
+            ('else' b2=block {((IfElse) $ast).setElseBlock($b2.ast);})?
+        | ID '(' arguments ')' ';' {$ast =
+            new FunctionInvocation($ID.getLine(), $ID.getCharPositionInLine()+1, $arguments.ast, new Variable($ID.getLine(), $ID.getCharPositionInLine()+1,$ID.text));}
+        | e1=expression '=' e2=expression ';' { $ast = new Assignment($e1.ast.getLine(), $e1.ast.getColumn(), $e1.ast, $e2.ast);}
+        | w='write'  e1=expression  ';' { $ast = new Write($w.getLine(), $w.getCharPositionInLine()+1, $e1.ast);}
+        | r='read'  e1=expression  ';' {$ast = new Read($r.getLine(), $r.getCharPositionInLine()+1, $e1.ast);}
+        | w='while' '(' e1=expression ')' b1=block {$ast = new While($w.getLine(), $w.getCharPositionInLine()+1, $e1.ast, $b1.ast);}
+        | r='return' e1=expression ';' {$ast = new Return($r.getLine(), $r.getCharPositionInLine()+1, $e1.ast);}
         ;
-params:(expression (',' expression)*)
-    ;
-block: statement*
-        | '{' statement* '}'
+params returns [List<Expression> ast = new ArrayList<>()]:
+    (e1=expression {$ast.add($e1.ast);} (',' e2=expression {$ast.add($e2.ast);}  )*)
+        ;
+arguments returns [List<Expression> ast = new ArrayList<>()]:
+         p1=params {$ast = $p1.ast;}
+        |
+        ;
+block returns[List<Statement> ast = new ArrayList<>()]:
+         (s1=statement {$ast.add($s1.ast);} )*
+        | '{' (s1=statement {$ast.add($s1.ast);} )* '}'
         ;
 
 // -------- type --------
-type: builtInType'[' INT_CONSTANT ']'
-        | 'struct' '{' (varDefinition  )* '}' ID
-        | builtInType
+type returns[Type ast]:
+         b1=builtInType'[' i=INT_CONSTANT ']' {$ast = new ArrayType($b1.ast.getLine(),$b1.ast.getColumn(), LexerHelper.lexemeToInt($i.text), $b1.ast);}
+        | s='struct' '{' sf=structFields  '}' {$ast = new StructType($s.getLine(), $s.getCharPositionInLine()+1,$sf.ast);}
+        | b1=builtInType {$ast = $b1.ast}
         ;
-builtInType:'char'
-           | 'int'
-           | 'double'
+builtInType returns[Type ast]:
+             t1='char' {$ast = new CharacterType($t1.getLine(), $t1.getCharPositionInLine()+1);}
+           | t1='int' {$ast = new IntegerType($t1.getLine(), $t1.getCharPositionInLine()+1);}
+           | t1='double' {$ast = new DoubleType($t1.getLine(), $t1.getCharPositionInLine()+1);}
            ;
-returnType: builtInType|'void';
+structFields returns[List<StructFieldType> ast = new ArrayList<>()]:
+        (t1=type ID ';' {$ast.add(new StructFieldType($t1.ast.getLine(), $t1.ast.getColumn(), $t1.ast, $ID.text));} )*
+        ;
 
 fragment
 LETTER: [a-zA-Z]

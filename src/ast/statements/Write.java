@@ -3,6 +3,8 @@ package ast.statements;
 
 import ast.expressions.Expression;
 
+import java.util.List;
+
 public class Write extends AbstractStatement{
     private Expression expression;
     public Write(int line, int column, Expression expression) {

@@ -4,8 +4,10 @@ import ast.types.Type;
 
 public class FieldAccess extends AbstractExpression {
     private String name;
-    public FieldAccess(int line, int column, Type type, String name) {
-        super(line, column, type);
+    private Expression expression;
+    public FieldAccess(int line, int column, String name, Expression expression) {
+        super(line, column);
         this.name = name;
+        this.expression = expression;
     }
 }
