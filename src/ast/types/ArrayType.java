@@ -9,4 +9,12 @@ public class ArrayType extends AbstractType{
         this.size = size;
         this.type = type;
     }
+
+
+    public void setType(Type t){
+        this.type = t;
+    }
+    public Type getType(){
+        return this.type;
+    }
 }

@@ -1,6 +1,5 @@
 package util;
 
-import ast.definitions.Definition;
 import ast.definitions.VariableDefinition;
 import ast.statements.Statement;
 
@@ -10,7 +9,10 @@ import java.util.List;
 public class StmtVarDfnDTO {
     private List<VariableDefinition> varDefinitions;
     private List<Statement> statements;
-    public StmtVarDfnDTO(){}
+    public StmtVarDfnDTO(List<VariableDefinition> varDefinitions,List<Statement> statements ){
+        this.varDefinitions = varDefinitions;
+        this.statements = statements;
+    }
 
     public void addStatement(Statement statement){
         this.statements.add(statement);

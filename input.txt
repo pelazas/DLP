@@ -1,29 +1,30 @@
 
-
+// * Variable and function definitions
 int i, j, n;
 
-
+// * Empty function
 void p() {}
 
-char c;
+char c; // global variable
 
 int f(int n, double r) {
   double real;
   char c1, c2;
   c1 = (char)n;
   real = (double)c1 + (double)n + r;
-  p();
+  p(); // * Invocation as a statement
   return (int)c1;
 }
 
 
+// * Main function
 void main() {
-
+  // * Record
   struct {
     int integer;
     char character;
   } pair;
-
+  // * Array
   int[10][5] vector;
   
   i=0;
@@ -35,7 +36,7 @@ void main() {
     }
   i=i+1;
   }
-
+  
   i=0;
   pair.character = '0';
   pair.integer = 48;
@@ -46,8 +47,9 @@ void main() {
       write 'f', 'a', 'l', 's', 'e', '\n';
     i=i+1;
   }
-  write f(i, (double)i);
+  write f(i, (double)i); // * Invocation as an expression
   vector[9][(int)4.3]=5;
-  f(1, 2.2);
+  f(1, 2.2); // * Invocation as a statement
 }
+
 
