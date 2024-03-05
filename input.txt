@@ -23,6 +23,7 @@ void main() {
   struct {
     int integer;
     char character;
+    char character;
   } pair;
   // * Array
   int[10][5] vector;

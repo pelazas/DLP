@@ -8,4 +8,8 @@ public class StructFieldType extends AbstractType{
         this.type = type;
         this.name = name;
     }
+
+    public String getName(){
+        return this.name;
+    }
 }

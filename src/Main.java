@@ -1,4 +1,5 @@
 import ast.Program;
+import ast.errorhandler.ErrorHandler;
 import introspector.model.IntrospectorModel;
 import introspector.view.IntrospectorView;
 import parser.*;
@@ -12,18 +13,21 @@ public class Main {
 		        System.err.println("Please, pass me the input file.");
 		        return;
 		    }
-		   		 			
-		 // create a lexer that feeds off of input CharStream
+
 		CharStream input = CharStreams.fromFileName(args[0]);
 		CmmLexer lexer = new CmmLexer(input);
 
-
-
-		// create a parser that feeds off the tokens buffer
 		CommonTokenStream tokens = new CommonTokenStream(lexer); 
-		CmmParser parser = new CmmParser(tokens);	
-		// parser.program();
+		CmmParser parser = new CmmParser(tokens);
+
+		if(parser.getNumberOfSyntaxErrors()>0){
+			return;
+		}
 		Program ast = parser.program().ast;
+		if(ErrorHandler.getInstance().anyErrors()){
+			ErrorHandler.getInstance().showErrors(System.err);
+			return;
+		}
 		IntrospectorModel model=new IntrospectorModel("Program", ast);
 		new IntrospectorView("Introspector", model);
 	}
