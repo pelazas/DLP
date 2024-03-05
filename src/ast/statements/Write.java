@@ -6,10 +6,10 @@ import ast.expressions.Expression;
 import java.util.List;
 
 public class Write extends AbstractStatement{
-    private List<Expression> expressions;
-    public Write(int line, int column, List<Expression> expressions) {
+    private Expression expressions;
+    public Write(int line, int column, Expression expression) {
         super(line, column);
-        this.expressions = expressions;
+        this.expressions = expression;
 
     }
 }
