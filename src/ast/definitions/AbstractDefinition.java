@@ -15,11 +15,11 @@ public class AbstractDefinition extends AbstractASTNode implements Definition {
 
     @Override
     public Type getType() {
-        return null;
+        return type;
     }
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 }
