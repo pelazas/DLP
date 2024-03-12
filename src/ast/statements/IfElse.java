@@ -1,6 +1,7 @@
 package ast.statements;
 
 import ast.expressions.Expression;
+import semantic.Visitor;
 
 import java.util.List;
 
@@ -17,5 +18,23 @@ public class IfElse extends AbstractStatement{
 
     public void setElseBlock(List<Statement> elseBody){
         this.elseBody = elseBody;
+    }
+
+
+    public Expression getIfCondition() {
+        return ifCondition;
+    }
+
+    public List<Statement> getIfBody() {
+        return ifBody;
+    }
+
+    public List<Statement> getElseBody() {
+        return elseBody;
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
+        return visitor.visit(this,parameter);
     }
 }

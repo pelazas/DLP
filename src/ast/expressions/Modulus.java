@@ -1,5 +1,7 @@
 package ast.expressions;
 
+import semantic.Visitor;
+
 public class Modulus extends AbstractExpression{
     private Expression right;
     private Expression left;
@@ -8,5 +10,18 @@ public class Modulus extends AbstractExpression{
         super(line, column);
         this.left = left;
         this.right = right;
+    }
+
+    public Expression getRight() {
+        return right;
+    }
+
+    public Expression getLeft() {
+        return left;
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
+        return visitor.visit(this,parameter);
     }
 }

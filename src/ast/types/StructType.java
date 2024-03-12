@@ -1,6 +1,7 @@
 package ast.types;
 
 import ast.errorhandler.ErrorHandler;
+import semantic.Visitor;
 
 import java.util.List;
 
@@ -26,5 +27,10 @@ public class StructType extends AbstractType {
             }
         }
         return false;
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
+        return visitor.visit(this,parameter);
     }
 }

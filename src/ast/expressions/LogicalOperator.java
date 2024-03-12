@@ -1,5 +1,7 @@
 package ast.expressions;
 
+import semantic.Visitor;
+
 public class LogicalOperator extends AbstractExpression{
     private String operator;
     private Expression right;
@@ -9,5 +11,18 @@ public class LogicalOperator extends AbstractExpression{
         this.left = left;
         this.operator = operator;
         this.right = right;
+    }
+
+    public Expression getRight() {
+        return right;
+    }
+
+    public Expression getLeft() {
+        return left;
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
+        return visitor.visit(this,parameter);
     }
 }

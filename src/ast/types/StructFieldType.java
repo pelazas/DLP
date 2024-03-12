@@ -1,5 +1,7 @@
 package ast.types;
 
+import semantic.Visitor;
+
 public class StructFieldType extends AbstractType{
     private String name;
     private Type type;
@@ -11,5 +13,10 @@ public class StructFieldType extends AbstractType{
 
     public String getName(){
         return this.name;
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
+        return visitor.visit(this,parameter);
     }
 }

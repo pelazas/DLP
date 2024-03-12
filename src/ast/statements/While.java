@@ -1,6 +1,7 @@
 package ast.statements;
 
 import ast.expressions.Expression;
+import semantic.Visitor;
 
 import java.util.List;
 
@@ -11,5 +12,18 @@ public class While extends AbstractStatement{
         super(line, column);
         this.whileBody = whileBody;
         this.whileCondition = whileCondition;
+    }
+
+    public Expression getWhileCondition() {
+        return whileCondition;
+    }
+
+    public List<Statement> getWhileBody() {
+        return whileBody;
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
+        return visitor.visit(this,parameter);
     }
 }
