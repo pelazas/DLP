@@ -1,11 +1,7 @@
 package ast.expressions;
 
-import ast.expressions.AbstractExpression;
-import ast.expressions.Expression;
-import ast.expressions.Variable;
 import ast.statements.Statement;
-import ast.types.Type;
-import semantic.Visitor;
+import semantic.visitor.Visitor;
 
 import java.util.List;
 

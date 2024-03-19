@@ -2,9 +2,7 @@ package ast.statements;
 
 
 import ast.expressions.Expression;
-import semantic.Visitor;
-
-import java.util.List;
+import semantic.visitor.Visitor;
 
 public class Write extends AbstractStatement{
     private Expression expression;

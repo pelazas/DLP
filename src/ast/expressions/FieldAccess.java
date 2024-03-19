@@ -1,7 +1,6 @@
 package ast.expressions;
 
-import ast.types.Type;
-import semantic.Visitor;
+import semantic.visitor.Visitor;
 
 public class FieldAccess extends AbstractExpression {
     private String name;

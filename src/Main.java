@@ -5,6 +5,8 @@ import introspector.view.IntrospectorView;
 import parser.*;
 
 import org.antlr.v4.runtime.*;
+import semantic.visitor.IdentificationVisitor;
+import semantic.visitor.TypeCheckingVisitor;
 
 public class Main {
 	
@@ -24,6 +26,9 @@ public class Main {
 			return;
 		}
 		Program ast = parser.program().ast;
+		ast.accept(new TypeCheckingVisitor(), null);
+		ast.accept(new IdentificationVisitor(), null);
+
 		if(ErrorHandler.getInstance().anyErrors()){
 			ErrorHandler.getInstance().showErrors(System.err);
 			return;

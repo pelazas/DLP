@@ -1,8 +1,9 @@
 package ast.types;
 
 import ast.errorhandler.ErrorHandler;
-import semantic.Visitor;
+import semantic.visitor.Visitor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StructType extends AbstractType {
@@ -21,12 +22,16 @@ public class StructType extends AbstractType {
         for(int i = 0; i<structFields.size(); i++){
             StructFieldType type = structFields.get(i);
             for(int j = 0; j<structFields.size(); j++){
-                if(structFields.get(j).getName().equals(type.getName())){
+                if(structFields.get(j).getName().equals(type.getName()) && i!=j){
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    public List<StructFieldType> getStructFields(){
+        return new ArrayList<>(structFields);
     }
 
     @Override

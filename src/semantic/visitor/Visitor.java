@@ -1,4 +1,4 @@
-package semantic;
+package semantic.visitor;
 
 import ast.Program;
 import ast.definitions.FuncDefinition;

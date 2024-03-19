@@ -1,7 +1,7 @@
 package ast;
 
 import ast.definitions.Definition;
-import semantic.Visitor;
+import semantic.visitor.Visitor;
 
 import java.util.List;
 

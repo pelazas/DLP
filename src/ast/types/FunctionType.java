@@ -1,8 +1,9 @@
 package ast.types;
 
 import ast.definitions.VariableDefinition;
-import semantic.Visitor;
+import semantic.visitor.Visitor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionType extends AbstractType{
@@ -13,6 +14,14 @@ public class FunctionType extends AbstractType{
         super(line, column);
         this.returnType = returnType;
         this.variableDefinitions = variableDefinitions;
+    }
+
+    public List<VariableDefinition> getVariableDefinitions(){
+        return new ArrayList<>(variableDefinitions);
+    }
+
+    public Type getReturnType(){
+        return this.returnType;
     }
 
     @Override

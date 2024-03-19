@@ -1,6 +1,6 @@
 package ast.types;
 
-import semantic.Visitor;
+import semantic.visitor.Visitor;
 
 public class ArrayType extends AbstractType{
 

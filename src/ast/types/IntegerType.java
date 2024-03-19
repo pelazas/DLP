@@ -1,6 +1,6 @@
 package ast.types;
 
-import semantic.Visitor;
+import semantic.visitor.Visitor;
 
 public class IntegerType extends AbstractType{
     public IntegerType(int line, int column) {

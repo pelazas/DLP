@@ -1,6 +1,6 @@
 package ast.expressions;
 
-import semantic.Visitor;
+import semantic.visitor.Visitor;
 
 public class LogicalOperator extends AbstractExpression{
     private String operator;

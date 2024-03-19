@@ -1,9 +1,6 @@
 package ast.expressions;
 
-import ast.expressions.AbstractExpression;
-import ast.expressions.Expression;
-import ast.types.Type;
-import semantic.Visitor;
+import semantic.visitor.Visitor;
 
 public class UnaryMinus extends AbstractExpression {
     private Expression expression;

@@ -2,7 +2,7 @@ package ast.definitions;
 
 
 import ast.types.Type;
-import semantic.Visitor;
+import semantic.visitor.Visitor;
 
 public class VariableDefinition extends AbstractDefinition {
     public VariableDefinition(int line, int column, Type type, String name) {
