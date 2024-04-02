@@ -6,6 +6,7 @@ import ast.types.Type;
 public abstract class AbstractExpression extends AbstractASTNode implements Expression {
 
     boolean lValue;
+    Type type;
     public AbstractExpression(int line, int column) {
         super(line, column);
     }
@@ -17,4 +18,11 @@ public abstract class AbstractExpression extends AbstractASTNode implements Expr
         return lValue;
     }
 
+    public void setType(Type type){
+        this.type = type;
+    }
+
+    public Type getType(){
+        return this.type;
+    }
 }

@@ -6,6 +6,78 @@ import ast.statements.*;
 import ast.types.*;
 
 public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
+
+    /*
+    * EXPRESSIONS:
+    *
+    * (P) Arithmetic: expression1 -> expression2 expression3
+    * (R) expression1.type = expression2.type.arithmetic(expression3.type)
+    *
+    * (P) Modulus: expression1 -> expression2 expression3
+    * (R) expression1.type = expression2.type.modulus(expression3)
+    *
+    * (P) Logical: expression1 -> expression2 expression3
+    * (R) expression1.type = expression2.type.logical(expression3.type)
+    *
+    * (P) UnaryNot: expression1 -> expression2
+    * (R) expression1.type = expression2.type.unaryNot()
+    *
+    * (P) Comparison: expression1 -> expression2 expression3
+    * (R) expression1.type = expression2.type.comparison(expression3.type)
+    *
+    * (P) UnaryMinus: expression1 -> expression2
+    * (R) expression1.type = expression2.type.unaryMinus()
+    *
+    * (P) Cast: expression1 -> type expression2
+    * (R) expression1.type = expression2.type.castTo(type)
+    *
+    * (P) Indexing: expression1 -> expression2 expression3
+    * (R) expression1.type = expression2.type.squareBrackets(expression3.type)
+    *
+    * (P) FunctionInvocation: expression1 -> expression2 expression*
+    * (R) expression1.type = expression2.type.parenthesis( expression*.stream().map(exp -> exp.type).toArray() )
+    *
+    * (P) Variable: expression1 -> ID
+    * (R) expression1.type = expression1.definition.type ? expression1.definition.type : new ErrorType()
+    *
+    * (P) IntLiteral: expression1 -> INT_LITERAL
+    * (R) expression1.type = new IntegerType()
+    *
+    * (P) DoubleLiteral: expression1 -> DOUBLE_LITERAL
+    * (R) expression1.type = new DoubleType()
+    *
+    * (P) CharacterLiteral: expression1 -> CHAR_LITERAL
+    * (R) expression1.type = new CharLiteral()
+    *
+    * STATEMENTS:
+    *
+    * (P) FunctionInvocation: statement -> expression expression*
+    * (R) expression.type.parenthesis( expression*.stream().map(exp -> exp.type).toArray() )
+    *
+    * (P) Assignment: statement1 -> expression1 expression2
+    * (R) expression2.type.mustBeAssignableTo(expression1.type)
+    *
+    * (P) Read: statement1 -> expression1
+    * (R) expression1.type.mustBeReadable()
+    *
+    * (P) Write: statement1 -> expression1
+    * (R) expression1.type.mustBeWritable()
+    *
+    * (P) WhileStmt: statement1 -> expression statement2*
+    * (R) expression.type.mustBeBoolean()
+    *     statement2*.stream().map(stmt -> stmt.returnType = type).toArray()
+    *
+    * (P) IfElseStmt: statement1 -> expression statement2*
+    * (R) expression.type.mustBeBoolean()
+    *     statement2*.stream().map(stmt -> stmt.returnType = type).toArray()
+    *
+    * (P) Return: statement1 -> expression
+    * (R) expression.type.mustBeReturnable(statement1.returnType)
+    *
+    * (P) FuncDefinition: definition1 -> type definition2* statement*
+    * (R) statement*.stream().map(stmt -> stmt.returnType = type).toArray()
+    *
+    */
     @Override
     public Void visit(Arithmetic arithmetic, Void param) {
         arithmetic.getLeft().accept(this,null);
