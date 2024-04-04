@@ -17,6 +17,10 @@ public class Cast extends AbstractExpression{
         return expression;
     }
 
+    public Type getCastingType(){
+        return this.castingType;
+    }
+
     @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
         return visitor.visit(this,parameter);

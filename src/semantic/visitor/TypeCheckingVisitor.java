@@ -1,9 +1,14 @@
 package semantic.visitor;
 
+import ast.definitions.Definition;
+import ast.definitions.FuncDefinition;
+import ast.definitions.VariableDefinition;
 import ast.errorhandler.ErrorHandler;
 import ast.expressions.*;
 import ast.statements.*;
 import ast.types.*;
+
+import java.util.List;
 
 public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
 
@@ -80,36 +85,52 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
     */
     @Override
     public Void visit(Arithmetic arithmetic, Void param) {
-        arithmetic.getLeft().accept(this,null);
-        arithmetic.getRight().accept(this,null);
+        Expression left = arithmetic.getLeft();
+        Expression right = arithmetic.getRight();
+
+        left.accept(this,null);
+        right.accept(this,null);
+
         arithmetic.setLValue(false);
+        arithmetic.setType(left.getType().arithmetic(right.getType(), left.getLine(), left.getColumn()));
+
         return null;
     }
 
     @Override
     public Void visit(Cast cast, Void param) {
-        cast.getExpression().accept(this, null);
+        Expression expression = cast.getExpression();
+        expression.accept(this, null);
+
         cast.setLValue(false);
+        cast.setType(expression.getType().castTo(cast.getCastingType(), cast.getLine(), cast.getColumn()));
         return null;
     }
 
     @Override
     public Void visit(CharacterLiteral characterLiteral, Void param) {
         characterLiteral.setLValue(false);
+        characterLiteral.setType(new CharacterType(characterLiteral.getLine(), characterLiteral.getColumn()));
         return null;
     }
 
     @Override
     public Void visit(Comparison comparison, Void param) {
-        comparison.getLeft().accept(this,null);
-        comparison.getRight().accept(this,null);
+        Expression left = comparison.getLeft();
+        Expression right = comparison.getRight();
+
+        left.accept(this,null);
+        right.accept(this,null);
+
         comparison.setLValue(false);
+        comparison.setType(left.getType().comparison(right.getType(), left.getLine(), left.getColumn()));
         return null;
     }
 
     @Override
     public Void visit(DoubleLiteral doubleLiteral, Void param) {
         doubleLiteral.setLValue(false);
+        doubleLiteral.setType(new DoubleType(doubleLiteral.getLine(), doubleLiteral.getColumn()));
         return null;
     }
 
@@ -122,73 +143,109 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
 
     @Override
     public Void visit(FunctionInvocation functionInvocation, Void param) {
+        Expression variable = functionInvocation.getVariable();
+        List<Expression> parameters = functionInvocation.getExpressions();
+
         functionInvocation.getVariable().accept(this,null);
         functionInvocation.getExpressions().forEach(expression -> expression.accept(this,null));
+
         functionInvocation.setLValue(false);
+        //expression
+        functionInvocation.setType(variable.getType().parenthesis( parameters.stream().map(expression -> expression.getType()).toList(), functionInvocation.getLine(), functionInvocation.getColumn()));
         return null;
     }
 
     @Override
     public Void visit(Indexing indexing, Void param) {
-        indexing.getArray().accept(this,null);
-        indexing.getIndex().accept(this,null);
+        Expression array = indexing.getArray();
+        Expression index = indexing.getIndex();
+
+        array.accept(this,null);
+        index.accept(this,null);
+
         indexing.setLValue(true);
+        indexing.setType(array.getType().squareBrackets(index.getType(), indexing.getLine(), indexing.getColumn()));
         return null;
     }
 
     @Override
     public Void visit(IntLiteral intLiteral, Void param) {
         intLiteral.setLValue(false);
+        intLiteral.setType(new IntegerType(intLiteral.getLine(), intLiteral.getColumn()));
         return null;
     }
 
     @Override
     public Void visit(LogicalOperator logicalOperator, Void param) {
-        logicalOperator.getLeft().accept(this,null);
-        logicalOperator.getRight().accept(this,null);
+        Expression left = logicalOperator.getLeft();
+        Expression right = logicalOperator.getRight();
+
+        left.accept(this,null);
+        right.accept(this,null);
+
         logicalOperator.setLValue(false);
+        logicalOperator.setType(left.getType().logical(right.getType(), left.getLine(), left.getColumn()));
         return null;
     }
 
     @Override
     public Void visit(Modulus modulus, Void param) {
-        modulus.getLeft().accept(this,null);
-        modulus.getRight().accept(this,null);
+        Expression left = modulus.getLeft();
+        Expression right = modulus.getRight();
+
+        left.accept(this,null);
+        right.accept(this,null);
+
         modulus.setLValue(false);
+        modulus.setType(left.getType().modulus(right.getType(), left.getLine(), left.getColumn()));
         return null;
     }
 
     @Override
     public Void visit(UnaryMinus unaryMinus, Void param) {
-        unaryMinus.getExpression().accept(this,null);
+        Expression expression = unaryMinus.getExpression();
+        expression.accept(this,null);
         unaryMinus.setLValue(false);
+        unaryMinus.setType(expression.getType().unaryMinus(expression.getLine(), expression.getColumn()));
         return null;
     }
 
     @Override
     public Void visit(UnaryNot unaryNot, Void param) {
-        unaryNot.getExpression().accept(this,null);
+        Expression expression = unaryNot.getExpression();
+        expression.accept(this,null);
+
         unaryNot.setLValue(false);
+        unaryNot.setType(expression.getType().unaryNot(expression.getLine(), expression.getColumn()));
         return null;
     }
 
     @Override
     public Void visit(Variable variable, Void param) {
         variable.setLValue(true);
+        if(variable.getDefinition().getType() != null){
+            variable.setType(variable.getDefinition().getType());
+        } else {
+            new ErrorType(variable.getLine(), variable.getColumn(),
+                    "Variable "+variable.getName()+" should be annotated with its definition");
+        }
         return null;
     }
 
     @Override
     public Void visit(Assignment assignment, Void param) {
-        assignment.getLeft().accept(this,null);
-        assignment.getRight().accept(this, null);
+        Expression left = assignment.getLeft();
+        Expression right = assignment.getRight();
+
+        left.accept(this,null);
+        right.accept(this, null);
 
         if(!assignment.getLeft().getLValue()){
-            ErrorHandler.getInstance().addErrors(
-                    new ErrorType(assignment.getLeft().getLine(), assignment.getLeft().getColumn(),
-                            "The left part of an assignment must be an lvalue")
+                new ErrorType(left.getLine(), left.getColumn(),
+                        "The left part of an assignment must be an lvalue"
             );
         }
+        right.getType().mustBeAssignableTo(left.getType(), left.getLine(), left.getColumn());
         return null;
     }
 
@@ -198,11 +255,75 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
         readExpression.accept(this,null);
 
         if(!read.getExpression().getLValue()){
-            ErrorHandler.getInstance().addErrors(
-                    new ErrorType(read.getExpression().getLine(), read.getExpression().getColumn(),
-                            "The expression to read must be an lvalue")
-            );
+                new ErrorType(read.getExpression().getLine(), read.getExpression().getColumn(),
+                        "The expression to read must be an lvalue");
         }
+
+        readExpression.getType().mustBeReadable(read.getLine(), read.getColumn());
+        return null;
+    }
+
+    @Override
+    public Void visit(Write write, Void param) {
+        Expression expression = write.getExpression();
+        expression.accept(this,null);
+
+        expression.getType().mustBeWriteable(expression.getLine(), expression.getColumn());
+        return null;
+    }
+
+    @Override
+    public Void visit(While whileStmt, Void param) {
+        Expression condition = whileStmt.getWhileCondition();
+        List<Statement> statements = whileStmt.getWhileBody();
+
+        condition.accept(this,null);
+        statements.forEach(statement -> statement.accept(this,null));
+
+        condition.getType().mustBeBoolean(condition.getLine(), condition.getColumn());
+        statements.forEach(statement -> statement.setReturnType(statement.getReturnType()));
+        return null;
+    }
+
+    @Override
+    public Void visit(FuncDefinition funcDefinition, Void param) {
+        List<VariableDefinition> variableDefinitions = funcDefinition.getVariableDefinitions();
+        List<Statement> statements = funcDefinition.getStatements();
+        FunctionType functionType = funcDefinition.getFunctionType();
+
+        functionType.accept(this,null);
+        variableDefinitions.forEach(variableDefinition -> variableDefinition.accept(this, null));
+        statements.forEach(statement -> statement.accept(this,null));
+        statements.forEach(statement -> statement.setReturnType(functionType));
+
+        return null;
+    }
+
+    @Override
+    public Void visit(IfElse ifElse, Void param) {
+        List<Statement> ifbody = ifElse.getIfBody();
+        List<Statement> elsebody = ifElse.getElseBody();
+        Expression ifCondition = ifElse.getIfCondition();
+
+        elsebody.forEach(statement -> statement.accept(this,null));
+        ifbody.forEach(statement -> statement.accept(this,null));
+        ifCondition.accept(this,null);
+
+        ifCondition.getType().mustBeBoolean(ifCondition.getLine(), ifCondition.getColumn());
+        ifbody.forEach(statement -> statement.setReturnType(statement.getReturnType()));
+        elsebody.forEach(statement -> statement.setReturnType(statement.getReturnType()));
+
+        return null;
+    }
+
+    @Override
+    public Void visit(Return returnStmt, Void param) {
+
+        Expression expression = returnStmt.getExpression();
+
+        expression.accept(this,null);
+
+        expression.getType().mustBeReturnable(returnStmt.getReturnType(), returnStmt.getLine(), returnStmt.getColumn());
         return null;
     }
 

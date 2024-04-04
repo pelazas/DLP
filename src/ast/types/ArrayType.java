@@ -1,5 +1,6 @@
 package ast.types;
 
+import ast.errorhandler.ErrorHandler;
 import semantic.visitor.Visitor;
 
 public class ArrayType extends AbstractType{
@@ -23,5 +24,21 @@ public class ArrayType extends AbstractType{
     @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
         return visitor.visit(this,parameter);
+    }
+
+    @Override
+    public Type squareBrackets(Type type, int line, int column) {
+        String typeString = type.getClass().getSimpleName();
+        switch (typeString){
+            case "IntegerType":
+                return new IntegerType(line, column);
+            case "ErrorType":
+                return type;
+            default:
+                new ErrorType(line, column,
+                        "Cannot perform indexing operation between ArrayType and "+typeString);
+                break;
+        }
+        return null;
     }
 }

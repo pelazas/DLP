@@ -15,8 +15,8 @@ public class IdentificationVisitor extends AbstractVisitor<Void,Void>{
         variableDefinition.getType().accept(this,null);
         boolean isNotInserted = symbolTable.insert(variableDefinition);
         if(!isNotInserted){
-            ErrorHandler.getInstance().addErrors(new ErrorType(variableDefinition.getLine(), variableDefinition.getColumn(),
-                    String.format("Variable with ID: %s is already defined", variableDefinition.getName())));
+            new ErrorType(variableDefinition.getLine(), variableDefinition.getColumn(),
+                    String.format("Variable with ID: %s is already defined", variableDefinition.getName()));
         }
         return null;
     }
@@ -25,8 +25,8 @@ public class IdentificationVisitor extends AbstractVisitor<Void,Void>{
 
         boolean isNotInserted = symbolTable.insert(funcDefinition);
         if(!isNotInserted){
-            ErrorHandler.getInstance().addErrors(new ErrorType(funcDefinition.getLine(), funcDefinition.getColumn(),
-                    String.format("Function with ID: %s is already defined", funcDefinition.getName())));
+            new ErrorType(funcDefinition.getLine(), funcDefinition.getColumn(),
+                    String.format("Function with ID: %s is already defined", funcDefinition.getName()));
         }
         symbolTable.set();
         funcDefinition.getFunctionType().accept(this,null);
@@ -41,8 +41,10 @@ public class IdentificationVisitor extends AbstractVisitor<Void,Void>{
     public Void visit(Variable variable, Void param) {
         Definition def = symbolTable.find(variable.getName());
         if(def == null){
-            ErrorHandler.getInstance().addErrors(new ErrorType(variable.getLine(), variable.getColumn(),
-                    String.format("Variable with ID: %s is not defined", variable.getName())));
+            new ErrorType(variable.getLine(), variable.getColumn(),
+                    String.format("Variable with ID: %s is not defined", variable.getName()));
+        } else {
+            variable.setDefinition(def);
         }
         return null;
     }

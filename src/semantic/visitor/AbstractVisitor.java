@@ -8,6 +8,8 @@ import ast.expressions.*;
 import ast.statements.*;
 import ast.types.*;
 
+import java.util.List;
+
 public abstract class AbstractVisitor<TP,TR> implements Visitor<TP,TR> {
 
     public Void visit(Arithmetic arithmetic, Void param) {
@@ -97,7 +99,6 @@ public abstract class AbstractVisitor<TP,TR> implements Visitor<TP,TR> {
         ifElse.getElseBody().forEach(statement -> statement.accept(this,null));
         ifElse.getIfBody().forEach(statement -> statement.accept(this,null));
         ifElse.getIfCondition().accept(this,null);
-        ifElse.accept(this,null);
         return null;
     }
 
@@ -108,8 +109,11 @@ public abstract class AbstractVisitor<TP,TR> implements Visitor<TP,TR> {
     }
 
     public Void visit(While whileStmt, Void param) {
-        whileStmt.getWhileBody().forEach(statement -> statement.accept(this,null));
-        whileStmt.getWhileBody().forEach(statement -> statement.accept(this,null));
+        Expression condition = whileStmt.getWhileCondition();
+        List<Statement> statements = whileStmt.getWhileBody();
+
+        condition.accept(this,null);
+        statements.forEach(statement -> statement.accept(this,null));
         return null;
     }
 

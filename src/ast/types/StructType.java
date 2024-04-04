@@ -13,7 +13,7 @@ public class StructType extends AbstractType {
         super(line, column);
         this.structFields = structFields;
         if(isDuplicated()){
-            ErrorHandler.getInstance().addErrors(new ErrorType(line, column, "Duplicated fields in struct"));
+            new ErrorType(line, column, "Duplicated fields in struct");
         }
 
     }
