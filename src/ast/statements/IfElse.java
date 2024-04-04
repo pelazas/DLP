@@ -22,7 +22,6 @@ public class IfElse extends AbstractStatement{
         this.elseBody = elseBody;
     }
 
-
     public Expression getIfCondition() {
         return ifCondition;
     }

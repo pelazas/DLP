@@ -284,7 +284,7 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
         List<Statement> statements = whileStmt.getWhileBody();
 
         //preorder
-        statements.forEach(statement -> statement.setReturnType(statement.getReturnType()));
+        statements.forEach(statement -> statement.setReturnType(whileStmt.getReturnType()));
 
         condition.accept(this,null);
         statements.forEach(statement -> statement.accept(this,null));
@@ -311,12 +311,12 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
 
     @Override
     public Void visit(IfElse ifElse, Void param) {
+        Expression ifCondition = ifElse.getIfCondition();
         List<Statement> ifbody = ifElse.getIfBody();
         List<Statement> elsebody = ifElse.getElseBody();
-        Expression ifCondition = ifElse.getIfCondition();
 
-        ifbody.forEach(statement -> statement.setReturnType(statement.getReturnType()));
-        elsebody.forEach(statement -> statement.setReturnType(statement.getReturnType()));
+        ifbody.forEach(statement -> statement.setReturnType(ifElse.getReturnType()));
+        elsebody.forEach(statement -> statement.setReturnType(ifElse.getReturnType()));
 
         ifCondition.accept(this,null);
         ifbody.forEach(statement -> statement.accept(this,null));
