@@ -12,23 +12,24 @@ public class IdentificationVisitor extends AbstractVisitor<Void,Void>{
     SymbolTable symbolTable = new SymbolTable();
 
     public Void visit(VariableDefinition variableDefinition, Void param) {
-        variableDefinition.getType().accept(this,null);
         boolean isNotInserted = symbolTable.insert(variableDefinition);
         if(!isNotInserted){
             new ErrorType(variableDefinition.getLine(), variableDefinition.getColumn(),
                     String.format("Variable with ID: %s is already defined", variableDefinition.getName()));
         }
+        variableDefinition.getType().accept(this,null);
         return null;
     }
 
     public Void visit(FuncDefinition funcDefinition, Void param) {
-
         boolean isNotInserted = symbolTable.insert(funcDefinition);
         if(!isNotInserted){
             new ErrorType(funcDefinition.getLine(), funcDefinition.getColumn(),
                     String.format("Function with ID: %s is already defined", funcDefinition.getName()));
         }
         symbolTable.set();
+
+        funcDefinition.getType().accept(this, null);
         funcDefinition.getFunctionType().accept(this,null);
         funcDefinition.getVariableDefinitions().forEach(variableDefinition -> variableDefinition.accept(this, null));
         funcDefinition.getStatements().forEach(statement -> statement.accept(this,null));

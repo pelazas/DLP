@@ -26,8 +26,9 @@ public class Main {
 			return;
 		}
 		Program ast = parser.program().ast;
-		ast.accept(new TypeCheckingVisitor(), null);
+
 		ast.accept(new IdentificationVisitor(), null);
+		ast.accept(new TypeCheckingVisitor(), null);
 
 		if(ErrorHandler.getInstance().anyErrors()){
 			ErrorHandler.getInstance().showErrors(System.err);

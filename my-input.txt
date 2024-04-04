@@ -1,0 +1,6 @@
+void main(){
+    double d1;
+    int i1;
+    d1 = 5.0;
+    i1 = (int)d1;
+}

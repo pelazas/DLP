@@ -16,18 +16,15 @@ public class DoubleType extends AbstractType{
     @Override
     public Type arithmetic(Type type, int line, int column) {
         String typeString = type.getClass().getSimpleName();
-        System.out.println(typeString);
         switch (typeString){
             case "DoubleType":
                 return new DoubleType(line, column);
             case "ErrorType":
                 return type;
             default:
-                new ErrorType(line, column,
+                return new ErrorType(line, column,
                         "Cannot perform arithmetic operation between DoubleType and " + typeString);
-                break;
         }
-        return null;
     }
 
     @Override
@@ -39,11 +36,9 @@ public class DoubleType extends AbstractType{
             case "ErrorType":
                 return type;
             default:
-                new ErrorType(line, column,
+                return new ErrorType(line, column,
                         "Cannot perform comparison operation between DoubleType and "+typeString);
-                break;
         }
-        return null;
     }
 
     @Override
@@ -64,18 +59,16 @@ public class DoubleType extends AbstractType{
             case "ErrorType":
                 return castingType;
             default:
-                new ErrorType(line, column,
+                return new ErrorType(line, column,
                         "Cannot perform casting operation between DoubleType and "+typeString);
-                break;
         }
-        return null;
     }
 
     @Override
     public void mustBeAssignableTo(Type type, int line, int column){
         if(!type.getClass().getSimpleName().equals("DoubleType")){
             new ErrorType(line,column,
-                    "Cannot assign a "+type.getClass().getSimpleName() +" to a DoubleType");
+                    "Cannot assign a DoubleType to a "+type.getClass().getSimpleName());
         }
     }
 
@@ -89,7 +82,8 @@ public class DoubleType extends AbstractType{
 
     @Override
     public void mustBeReturnable(Type type,int line, int column){
-        if(!type.getClass().getSimpleName().equals("IntegerTYpe")){
+
+        if(!type.getClass().getSimpleName().equals("DoubleType")){
             new ErrorType(line,column,
                     "The return type of the statement ("+type.getClass().getSimpleName()+")" +
                             " doesn't match the return type of the function (IntegerType)");

@@ -32,4 +32,6 @@ public interface Type extends ASTNode {
     void mustBeBoolean(int line, int column);
 
     void mustBeReturnable(Type returnType, int line, int column);
+
+    Type dot(String name, int line, int column);
 }

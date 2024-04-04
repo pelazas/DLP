@@ -47,6 +47,11 @@ public class SymbolTable {
         return null;
     }
 
+
+    public int getScope(){
+        return this.scope;
+    }
+
     public Definition findInCurrentScope(String id){
         return table.get(scope).get(id);
     }

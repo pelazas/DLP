@@ -11,6 +11,6 @@ public class DoubleLiteral extends AbstractExpression{
 
     @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
-        return null;
+        return visitor.visit(this,parameter);
     }
 }

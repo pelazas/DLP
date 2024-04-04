@@ -16,18 +16,15 @@ public class IntegerType extends AbstractType{
     @Override
     public Type arithmetic(Type type, int line, int column) {
         String typeString = type.getClass().getSimpleName();
-        System.out.println(typeString);
         switch (typeString){
             case "IntegerType":
                 return new IntegerType(line, column);
             case "ErrorType":
                 return type;
             default:
-                new ErrorType(line, column,
+                return new ErrorType(line, column,
                         "Cannot perform arithmetic operation between IntegerType and "+typeString);
-                break;
         }
-        return null;
     }
 
     @Override
@@ -40,11 +37,10 @@ public class IntegerType extends AbstractType{
             case "ErrorType":
                 return type;
             default:
-                new ErrorType(line, column,
+                return new ErrorType(line, column,
                         "Cannot perform modulus operation between IntegerType and "+typeString);
-                break;
+
         }
-        return null;
     }
 
     @Override
@@ -56,11 +52,9 @@ public class IntegerType extends AbstractType{
             case "ErrorType":
                 return type;
             default:
-                new ErrorType(line, column,
+                return new ErrorType(line, column,
                         "Cannot perform logical operation between IntegerType and "+typeString);
-                break;
         }
-        return null;
     }
 
     @Override
@@ -72,11 +66,9 @@ public class IntegerType extends AbstractType{
             case "ErrorType":
                 return type;
             default:
-                new ErrorType(line, column,
+                return new ErrorType(line, column,
                         "Cannot perform comparison operation between IntegerType and "+typeString);
-                break;
         }
-        return null;
     }
 
     @Override
@@ -102,18 +94,16 @@ public class IntegerType extends AbstractType{
             case "ErrorType":
                 return castingType;
             default:
-                new ErrorType(line, column,
+                return new ErrorType(line, column,
                         "Cannot perform casting operation between IntegerType and "+typeString);
-                break;
         }
-        return null;
     }
 
     @Override
     public void mustBeAssignableTo(Type type, int line, int column){
         if(!type.getClass().getSimpleName().equals("IntegerType")){
             new ErrorType(line,column,
-                    "Cannot assign a "+type.getClass().getSimpleName() +" to a IntegerType");
+                    "Cannot assign a IntegerType to a "+type.getClass().getSimpleName());
         }
     }
 
@@ -128,7 +118,7 @@ public class IntegerType extends AbstractType{
     }
     @Override
     public void mustBeReturnable(Type type,int line, int column){
-        if(!type.getClass().getSimpleName().equals("IntegerTYpe")){
+        if(!type.getClass().getSimpleName().equals("IntegerType")){
             new ErrorType(line,column,
                     "The return type of the statement ("+type.getClass().getSimpleName()+")" +
                             " doesn't match the return type of the function (IntegerType)");

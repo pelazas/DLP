@@ -35,6 +35,17 @@ public class StructType extends AbstractType {
     }
 
     @Override
+    public Type dot(String name, int line, int column) {
+        for (StructFieldType structField : structFields) {
+            if (structField.getName().equals(name)) {
+                return structField.getType();
+            }
+        }
+        return new ErrorType(line,column,
+                "No struct field exists with name: "+name);
+    }
+
+    @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
         return visitor.visit(this,parameter);
     }

@@ -14,6 +14,9 @@ public class FieldAccess extends AbstractExpression {
     public Expression getExpression() {
         return expression;
     }
+    public String getName(){
+        return this.name;
+    }
 
     @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {

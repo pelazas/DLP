@@ -16,18 +16,15 @@ public class CharacterType extends AbstractType{
     @Override
     public Type arithmetic(Type type, int line, int column) {
         String typeString = type.getClass().getSimpleName();
-        System.out.println(typeString);
         switch (typeString){
             case "CharacterType":
                 return new IntegerType(line, column);
             case "ErrorType":
                 return type;
             default:
-                new ErrorType(line, column,
+                return new ErrorType(line, column,
                         "Cannot perform arithmetic operation between CharacterType and " + typeString);
-                break;
         }
-        return null;
     }
 
     @Override
@@ -40,11 +37,9 @@ public class CharacterType extends AbstractType{
             case "ErrorType":
                 return type;
             default:
-                new ErrorType(line, column,
+                return new ErrorType(line, column,
                         "Cannot perform arithmetic operation between CharacterType and " + typeString);
-                break;
         }
-        return null;
     }
 
     @Override
@@ -56,11 +51,9 @@ public class CharacterType extends AbstractType{
             case "ErrorType":
                 return type;
             default:
-                new ErrorType(line, column,
+                return new ErrorType(line, column,
                         "Cannot perform comparison operation between CharacterType and "+typeString);
-                break;
         }
-        return null;
     }
 
     @Override
@@ -81,18 +74,16 @@ public class CharacterType extends AbstractType{
             case "ErrorType":
                 return castingType;
             default:
-                new ErrorType(line, column,
+                return new ErrorType(line, column,
                         "Cannot perform casting operation between CharacterType and "+typeString);
-                break;
         }
-        return null;
     }
 
     @Override
     public void mustBeAssignableTo(Type type, int line, int column){
         if(!type.getClass().getSimpleName().equals("CharacterType")){
             new ErrorType(line,column,
-                    "Cannot assign a "+type.getClass().getSimpleName() +" to a CharacterType");
+                    "Cannot assign a CharacterType to a "+type.getClass().getSimpleName());
         }
     }
 

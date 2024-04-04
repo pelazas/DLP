@@ -19,6 +19,12 @@ public abstract class AbstractVisitor<TP,TR> implements Visitor<TP,TR> {
     }
 
     public Void visit(Cast cast, Void param) {
+        Expression expression = cast.getExpression();
+        Type castingType = cast.getCastingType();
+
+        castingType.accept(this,null);
+        expression.accept(this,null);
+
         return null;
     }
 
@@ -96,8 +102,10 @@ public abstract class AbstractVisitor<TP,TR> implements Visitor<TP,TR> {
     }
 
     public Void visit(IfElse ifElse, Void param) {
-        ifElse.getElseBody().forEach(statement -> statement.accept(this,null));
         ifElse.getIfBody().forEach(statement -> statement.accept(this,null));
+        for( Statement s: ifElse.getElseBody()){
+            s.accept(this,null);
+        }
         ifElse.getIfCondition().accept(this,null);
         return null;
     }

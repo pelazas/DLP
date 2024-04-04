@@ -14,6 +14,9 @@ public class StructFieldType extends AbstractType{
     public String getName(){
         return this.name;
     }
+    public Type getType(){
+        return this.type;
+    }
 
     @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {

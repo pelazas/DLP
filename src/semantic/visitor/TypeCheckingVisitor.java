@@ -45,6 +45,9 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
     * (P) Variable: expression1 -> ID
     * (R) expression1.type = expression1.definition.type ? expression1.definition.type : new ErrorType()
     *
+    * (P) FieldAccess: expression1 -> expression2 ID
+    * (R) expression1.type = expression1.definition.type ? expression1.definition.type : new ErrorType()
+    *
     * (P) IntLiteral: expression1 -> INT_LITERAL
     * (R) expression1.type = new IntegerType()
     *
@@ -100,6 +103,7 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
     @Override
     public Void visit(Cast cast, Void param) {
         Expression expression = cast.getExpression();
+        cast.getCastingType().accept(this,null);
         expression.accept(this, null);
 
         cast.setLValue(false);
@@ -136,8 +140,10 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
 
     @Override
     public Void visit(FieldAccess fieldAccess, Void param) {
-        fieldAccess.getExpression().accept(this,null);
+        Expression expression = fieldAccess.getExpression();
+        expression.accept(this,null);
         fieldAccess.setLValue(true);
+        fieldAccess.setType(expression.getType().dot(fieldAccess.getName(),fieldAccess.getLine(), fieldAccess.getColumn() ));
         return null;
     }
 
@@ -223,6 +229,7 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
     @Override
     public Void visit(Variable variable, Void param) {
         variable.setLValue(true);
+
         if(variable.getDefinition().getType() != null){
             variable.setType(variable.getDefinition().getType());
         } else {
@@ -252,13 +259,13 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
     @Override
     public Void visit(Read read, Void param) {
         Expression readExpression = read.getExpression();
+
         readExpression.accept(this,null);
 
         if(!read.getExpression().getLValue()){
                 new ErrorType(read.getExpression().getLine(), read.getExpression().getColumn(),
                         "The expression to read must be an lvalue");
         }
-
         readExpression.getType().mustBeReadable(read.getLine(), read.getColumn());
         return null;
     }
@@ -267,7 +274,6 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
     public Void visit(Write write, Void param) {
         Expression expression = write.getExpression();
         expression.accept(this,null);
-
         expression.getType().mustBeWriteable(expression.getLine(), expression.getColumn());
         return null;
     }
@@ -277,11 +283,14 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
         Expression condition = whileStmt.getWhileCondition();
         List<Statement> statements = whileStmt.getWhileBody();
 
+        //preorder
+        statements.forEach(statement -> statement.setReturnType(statement.getReturnType()));
+
         condition.accept(this,null);
         statements.forEach(statement -> statement.accept(this,null));
 
+        //postorder
         condition.getType().mustBeBoolean(condition.getLine(), condition.getColumn());
-        statements.forEach(statement -> statement.setReturnType(statement.getReturnType()));
         return null;
     }
 
@@ -291,10 +300,11 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
         List<Statement> statements = funcDefinition.getStatements();
         FunctionType functionType = funcDefinition.getFunctionType();
 
+        statements.forEach(statement -> statement.setReturnType(functionType.getReturnType()));
+
         functionType.accept(this,null);
         variableDefinitions.forEach(variableDefinition -> variableDefinition.accept(this, null));
         statements.forEach(statement -> statement.accept(this,null));
-        statements.forEach(statement -> statement.setReturnType(functionType));
 
         return null;
     }
@@ -305,22 +315,21 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
         List<Statement> elsebody = ifElse.getElseBody();
         Expression ifCondition = ifElse.getIfCondition();
 
-        elsebody.forEach(statement -> statement.accept(this,null));
-        ifbody.forEach(statement -> statement.accept(this,null));
-        ifCondition.accept(this,null);
-
-        ifCondition.getType().mustBeBoolean(ifCondition.getLine(), ifCondition.getColumn());
         ifbody.forEach(statement -> statement.setReturnType(statement.getReturnType()));
         elsebody.forEach(statement -> statement.setReturnType(statement.getReturnType()));
+
+        ifCondition.accept(this,null);
+        ifbody.forEach(statement -> statement.accept(this,null));
+        elsebody.forEach(statement -> statement.accept(this,null));
+
+        ifCondition.getType().mustBeBoolean(ifCondition.getLine(), ifCondition.getColumn());
 
         return null;
     }
 
     @Override
     public Void visit(Return returnStmt, Void param) {
-
         Expression expression = returnStmt.getExpression();
-
         expression.accept(this,null);
 
         expression.getType().mustBeReturnable(returnStmt.getReturnType(), returnStmt.getLine(), returnStmt.getColumn());

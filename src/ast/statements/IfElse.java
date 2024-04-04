@@ -3,6 +3,7 @@ package ast.statements;
 import ast.expressions.Expression;
 import semantic.visitor.Visitor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class IfElse extends AbstractStatement{
@@ -14,6 +15,7 @@ public class IfElse extends AbstractStatement{
         super(line, column);
         this.ifCondition = ifCondition;
         this.ifBody = ifBody;
+        this.elseBody = new ArrayList<Statement>();
     }
 
     public void setElseBlock(List<Statement> elseBody){
