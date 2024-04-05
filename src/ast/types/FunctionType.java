@@ -31,19 +31,16 @@ public class FunctionType extends AbstractType{
 
     @Override
     public Type parenthesis(List<Type> parameters, int line, int column){
-        if(parameters.size() != variableDefinitions.size()){
-            new ErrorType(line,column, "The number of parameters is incorrect");
+        if (parameters.size() != variableDefinitions.size()) {
+            return new ErrorType(line, column, "The number of parameters is not the same as the function header");
         }
-        int i = 0;
-        for(Type parameter: parameters){ // el tipo de los valores en la invocación
-            if(parameters instanceof IntegerType || parameter instanceof DoubleType || parameter instanceof CharacterType){
-            } else {
-                new ErrorType(line,column,"The type of the "+i+"º parameter must be built-in");
+        for (int i = 0; i < variableDefinitions.size(); i++) {
+            String varDefType = variableDefinitions.get(i).getType().getClass().getSimpleName();
+            String paramType = parameters.get(i).getClass().getSimpleName();
+
+            if(!varDefType.equals(paramType)){
+                return new ErrorType(line,column, "The "+(i+1)+ " parameter should be " +varDefType +", but is "+paramType);
             }
-            if(variableDefinitions.get(i).getType()!= parameter){
-                new ErrorType(line,column,"The type of the "+i+"º parameter is not as expected");
-            }
-            i++;
         }
         return returnType;
     }

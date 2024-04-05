@@ -31,7 +31,7 @@ public class ArrayType extends AbstractType{
         String typeString = type.getClass().getSimpleName();
         switch (typeString){
             case "IntegerType":
-                return new IntegerType(line, column);
+                return this.type; // devolver el tipo del contenido
             case "ErrorType":
                 return type;
             default:
@@ -40,5 +40,10 @@ public class ArrayType extends AbstractType{
                 break;
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "ArrayType [of:" + type + ", size:" + size + "]";
     }
 }

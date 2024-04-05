@@ -1,6 +1,11 @@
+
+void initialize() {
+  int i;
+  int[8][3] fibonacci;
+
+  i = fibonacci[0][1] + fibonacci[0][0];
+}
+
 void main(){
-    double d1;
-    int i1;
-    d1 = 5.0;
-    i1 = (int)d1;
+    initialize();
 }

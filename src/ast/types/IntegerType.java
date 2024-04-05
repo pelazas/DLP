@@ -124,4 +124,8 @@ public class IntegerType extends AbstractType{
                             " doesn't match the return type of the function (IntegerType)");
         }
     }
+    @Override
+    public String toString(){
+        return "IntegerType";
+    }
 }

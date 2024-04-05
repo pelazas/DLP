@@ -29,7 +29,6 @@ public class IdentificationVisitor extends AbstractVisitor<Void,Void>{
         }
         symbolTable.set();
 
-        funcDefinition.getType().accept(this, null);
         funcDefinition.getFunctionType().accept(this,null);
         funcDefinition.getVariableDefinitions().forEach(variableDefinition -> variableDefinition.accept(this, null));
         funcDefinition.getStatements().forEach(statement -> statement.accept(this,null));

@@ -153,10 +153,9 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
         List<Expression> parameters = functionInvocation.getExpressions();
 
         functionInvocation.getVariable().accept(this,null);
-        functionInvocation.getExpressions().forEach(expression -> expression.accept(this,null));
+        parameters.forEach(expression -> expression.accept(this,null));
 
         functionInvocation.setLValue(false);
-        //expression
         functionInvocation.setType(variable.getType().parenthesis( parameters.stream().map(expression -> expression.getType()).toList(), functionInvocation.getLine(), functionInvocation.getColumn()));
         return null;
     }
@@ -169,8 +168,13 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
         array.accept(this,null);
         index.accept(this,null);
 
+        System.out.println("---- INDEXING ----");
+        System.out.println("array:  "+array);
+        System.out.println("index:  "+index);
+
         indexing.setLValue(true);
         indexing.setType(array.getType().squareBrackets(index.getType(), indexing.getLine(), indexing.getColumn()));
+
         return null;
     }
 
@@ -229,7 +233,6 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
     @Override
     public Void visit(Variable variable, Void param) {
         variable.setLValue(true);
-
         if(variable.getDefinition().getType() != null){
             variable.setType(variable.getDefinition().getType());
         } else {
@@ -242,6 +245,7 @@ public class TypeCheckingVisitor extends AbstractVisitor<Void,Void>{
     @Override
     public Void visit(Assignment assignment, Void param) {
         Expression left = assignment.getLeft();
+        System.out.println("evaluating right part of the assignment");
         Expression right = assignment.getRight();
 
         left.accept(this,null);

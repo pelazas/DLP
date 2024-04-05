@@ -26,4 +26,11 @@ public class Variable extends AbstractExpression{
     public Definition getDefinition() {
         return this.definition;
     }
+
+    @Override
+    public String toString() {
+        return "Variable{" +
+                "name='" + name +
+                '}';
+    }
 }
