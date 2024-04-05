@@ -68,22 +68,22 @@ funParams returns [List<VariableDefinition> ast = new ArrayList<>()]:
 
 // -------- expression --------
 expression returns [Expression ast]:
-          ID { $ast = new Variable($ID.getLine(),$ID.getCharPositionInLine()+1,$ID.text); }
+          '(' e1=expression ')' { $ast = $e1.ast; }
+        | e1=expression '[' e2=expression ']' { $ast = new Indexing($e1.ast.getLine(), $e1.ast.getColumn(), $e1.ast, $e2.ast);}
+        | e1=expression '.' ID {$ast = new FieldAccess($e1.ast.getLine(), $e1.ast.getColumn(), $ID.text, $e1.ast);}
+        | lp='(' t1=builtInType ')' e1=expression {$ast = new Cast($lp.getLine(), $lp.getCharPositionInLine()+1,$e1.ast,$t1.ast);}
+        | op='-' e1=expression { $ast = new UnaryMinus($op.getLine(), $op.getCharPositionInLine()+1,$e1.ast);}
+        | op='!' e1=expression {$ast = new UnaryNot($op.getLine(), $op.getCharPositionInLine()+1, $e1.ast);}
+        | e1=expression op=('*'|'/'|'%') e2=expression {$ast = OperationFactory.createOperation($e1.ast.getLine(), $e1.ast.getColumn(), $op.text, $e1.ast, $e2.ast);}
+        | e1=expression op=('+'|'-') e2=expression { $ast = new Arithmetic($e1.ast.getLine(), $e1.ast.getColumn(), $op.text, $e1.ast, $e2.ast );}
+        | e1=expression op=('>'|'>='|'=='|'<='|'<'|'!=') e2=expression {$ast = new Comparison($e1.ast.getLine(), $e1.ast.getColumn(), $op.text, $e1.ast, $e2.ast);}
+        | e1=expression op=('&&'|'||') e2=expression { $ast = new LogicalOperator($e1.ast.getLine(), $e1.ast.getColumn(), $op.text, $e1.ast, $e2.ast );}
+        | ID '(' arguments ')' {$ast =
+                    new FunctionInvocation($ID.getLine(), $ID.getCharPositionInLine()+1, $arguments.ast, new Variable($ID.getLine(), $ID.getCharPositionInLine()+1,$ID.text));}
         | i=INT_CONSTANT {$ast = new IntLiteral($i.getLine(),$i.getCharPositionInLine()+1, LexerHelper.lexemeToInt($i.text)); }
         | d=DOUBLE_CONSTANT { $ast = new DoubleLiteral($d.getLine(),$d.getCharPositionInLine()+1, LexerHelper.lexemeToReal($d.text));}
         | c=CHAR_CONSTANT { $ast = new CharacterLiteral($c.getLine(),$c.getCharPositionInLine()+1, LexerHelper.lexemeToChar($c.text));}
-        | '(' e1=expression ')' { $ast = $e1.ast; }
-        | e1=expression '.' ID {$ast = new FieldAccess($e1.ast.getLine(), $e1.ast.getColumn(), $ID.text, $e1.ast);}
-        | e1=expression op=('*'|'/'|'%') e2=expression {$ast = OperationFactory.createOperation($e1.ast.getLine(), $e1.ast.getColumn(), $op.text, $e1.ast, $e2.ast);}
-        | e1=expression op=('+'|'-') e2=expression { $ast = new Arithmetic($e1.ast.getLine(), $e1.ast.getColumn(), $op.text, $e1.ast, $e2.ast );}
-        | e1=expression op=('&&'|'||') e2=expression { $ast = new LogicalOperator($e1.ast.getLine(), $e1.ast.getColumn(), $op.text, $e1.ast, $e2.ast );}
-        | e1=expression '[' e2=expression ']' { $ast = new Indexing($e1.ast.getLine(), $e1.ast.getColumn(), $e1.ast, $e2.ast);}
-        | op='-' e1=expression { $ast = new UnaryMinus($op.getLine(), $op.getCharPositionInLine()+1,$e1.ast);}
-        | op='!' e1=expression {$ast = new UnaryNot($op.getLine(), $op.getCharPositionInLine()+1, $e1.ast);}
-        | e1=expression op=('>'|'>='|'=='|'<='|'<'|'!=') e2=expression {$ast = new Comparison($e1.ast.getLine(), $e1.ast.getColumn(), $op.text, $e1.ast, $e2.ast);}
-        | ID '(' arguments ')' {$ast =
-            new FunctionInvocation($ID.getLine(), $ID.getCharPositionInLine()+1, $arguments.ast, new Variable($ID.getLine(), $ID.getCharPositionInLine()+1,$ID.text));}
-        | lp='(' t1=builtInType ')' e1=expression {$ast = new Cast($lp.getLine(), $lp.getCharPositionInLine()+1,$e1.ast,$t1.ast);}
+        | ID { $ast = new Variable($ID.getLine(),$ID.getCharPositionInLine()+1,$ID.text); }
         ;
 
 // -------- statement --------
