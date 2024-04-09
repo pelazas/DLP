@@ -128,4 +128,9 @@ public class IntegerType extends AbstractType{
     public String toString(){
         return "IntegerType";
     }
+
+    @Override
+    public int getNumberOfBytes(){
+        return 2;
+    }
 }

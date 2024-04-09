@@ -44,4 +44,5 @@ public class FunctionType extends AbstractType{
         }
         return returnType;
     }
+
 }

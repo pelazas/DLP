@@ -90,4 +90,9 @@ public class DoubleType extends AbstractType{
         }
     }
 
+    @Override
+    public int getNumberOfBytes(){
+        return 4;
+    }
+
 }

@@ -178,6 +178,7 @@ public abstract class AbstractVisitor<TP,TR> implements Visitor<TP,TR> {
     public Void visit(FuncDefinition funcDefinition, Void param) {
         funcDefinition.getVariableDefinitions().forEach(variableDefinition -> variableDefinition.accept(this, null));
         funcDefinition.getStatements().forEach(statement -> statement.accept(this,null));
+        funcDefinition.getFunctionType().accept(this,null);
         return null;
     }
 

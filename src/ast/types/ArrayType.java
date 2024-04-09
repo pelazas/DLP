@@ -22,6 +22,11 @@ public class ArrayType extends AbstractType{
     }
 
     @Override
+    public int getNumberOfBytes(){
+        return size * type.getNumberOfBytes();
+    }
+
+    @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
         return visitor.visit(this,parameter);
     }

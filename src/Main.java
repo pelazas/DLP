@@ -1,5 +1,6 @@
 import ast.Program;
 import ast.errorhandler.ErrorHandler;
+import codegeneration.OffsetVisitor;
 import introspector.model.IntrospectorModel;
 import introspector.view.IntrospectorView;
 import parser.*;
@@ -29,6 +30,7 @@ public class Main {
 
 		ast.accept(new IdentificationVisitor(), null);
 		ast.accept(new TypeCheckingVisitor(), null);
+		ast.accept(new OffsetVisitor(), null);
 
 		if(ErrorHandler.getInstance().anyErrors()){
 			ErrorHandler.getInstance().showErrors(System.err);

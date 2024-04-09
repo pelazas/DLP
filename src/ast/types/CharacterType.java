@@ -103,4 +103,9 @@ public class CharacterType extends AbstractType{
                             " doesn't match the return type of the function (IntegerType)");
         }
     }
+
+    @Override
+    public int getNumberOfBytes(){
+        return 1;
+    }
 }

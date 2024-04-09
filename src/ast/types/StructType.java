@@ -46,6 +46,15 @@ public class StructType extends AbstractType {
     }
 
     @Override
+    public int getNumberOfBytes(){
+        int counter = 0;
+        for(StructFieldType sf: structFields){
+            counter += sf.getNumberOfBytes();
+        }
+        return counter;
+    }
+
+    @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
         return visitor.visit(this,parameter);
     }

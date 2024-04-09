@@ -90,4 +90,10 @@ public abstract class AbstractType extends AbstractASTNode implements Type {
                 "The type " + this.getClass().getSimpleName() + " can't be field accessed");
     }
 
+    @Override
+    public int getNumberOfBytes(){
+        assert false;
+        return 0;
+    }
+
 }
