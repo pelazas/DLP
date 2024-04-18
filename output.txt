@@ -1,20 +1,21 @@
 ' * Global variables
-' * CharacterType c (offset 0)
-' * IntegerType a (offset 1)
-' * DoubleType r (offset 3)
-' * IntegerType i (offset 7)
+	' * CharacterType c (offset 0)
+	' * IntegerType a (offset 1)
+	' * DoubleType r (offset 3)
+	' * IntegerType i (offset 7)
+
+' Invocation to the main function
 call main
 halt
+
 main:
 ' * Parameters:
 ' * Local variables:
-
 
 #line	7
 pusha 0
 pushb 97
 storeb
-
 
 #line	8
 ' * Write
@@ -22,18 +23,15 @@ pusha 0
 loadb
 outb
 
-
 #line	8
 ' * Write
 pushb 10
 outb
 
-
 #line	10
 pusha 1
 pushi 1
 storei
-
 
 #line	11
 pusha 7
@@ -43,19 +41,16 @@ pushi 3
 muli
 storei
 
-
 #line	13
 ' * Write
 pusha 1
 loadi
 outi
 
-
 #line	13
 ' * Write
 pushb 32
 outb
-
 
 #line	14
 ' * Write
@@ -63,12 +58,10 @@ pusha 7
 loadi
 outi
 
-
 #line	14
 ' * Write
 pushb 10
 outb
-
 
 #line	16
 ' * Read
@@ -76,7 +69,6 @@ pusha 3
 loadf
 inf
 storef
-
 
 #line	17
 ' * Write
@@ -87,12 +79,10 @@ loadf
 mulf
 outf
 
-
 #line	17
 ' * Write
 pushb 10
 outb
-
 
 #line	19
 ' * Write
@@ -102,12 +92,10 @@ pushf 4.5
 subf
 outf
 
-
 #line	19
 ' * Write
 pushb 32
 outb
-
 
 #line	20
 ' * Write
@@ -118,12 +106,10 @@ pushf 48.0
 divf
 outf
 
-
 #line	20
 ' * Write
 pushb 32
 outb
-
 
 #line	21
 ' * Write
@@ -132,12 +118,10 @@ pushi 1
 modi
 outi
 
-
 #line	21
 ' * Write
 pushb 32
 outb
-
 
 #line	22
 ' * Write
@@ -148,12 +132,10 @@ b2i
 addi
 outi
 
-
 #line	22
 ' * Write
 pushb 10
 outb
-
 
 #line	24
 ' * Write
@@ -162,12 +144,10 @@ pushi 1
 lti
 outi
 
-
 #line	24
 ' * Write
 pushb 32
 outb
-
 
 #line	25
 ' * Write
@@ -176,12 +156,10 @@ pushi 4
 gei
 outi
 
-
 #line	25
 ' * Write
 pushb 32
 outb
-
 
 #line	26
 ' * Write
@@ -190,12 +168,10 @@ pushi 5
 eqi
 outi
 
-
 #line	26
 ' * Write
 pushb 32
 outb
-
 
 #line	27
 ' * Write
@@ -204,12 +180,10 @@ pushi 1
 and
 outi
 
-
 #line	27
 ' * Write
 pushb 32
 outb
-
 
 #line	28
 ' * Write
@@ -218,19 +192,16 @@ pushi 0
 or
 outi
 
-
 #line	28
 ' * Write
 pushb 32
 outb
-
 
 #line	29
 ' * Write
 pushi 0
 not
 outi
-
 
 #line	29
 ' * Write

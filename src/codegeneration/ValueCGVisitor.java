@@ -206,10 +206,13 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
      */
     public Void visit(Modulus modulus, Void param){
         Type superType = modulus.getLeft().getType().superType();
+
         modulus.getLeft().accept(cg.getValueCGVisitor(), param);
         modulus.getLeft().getType().convertTo(superType);
+
         modulus.getRight().accept(cg.getValueCGVisitor(), param);
         modulus.getRight().getType().convertTo(superType);
+
         cg.addLineOfCode("mod" + superType.suffix());
         return null;
     }

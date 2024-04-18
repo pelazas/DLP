@@ -75,8 +75,11 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void,Void> {
 
         cg.addLineOfCode("' * Global variables");
         variableDefinitions.forEach(variableDefinition -> variableDefinition.accept(this,param));
+        cg.newLine();
+        cg.addLineOfCode("' Invocation to the main function");
         cg.addLineOfCode("call main");
         cg.addLineOfCode("halt");
+        cg.newLine();
         funcDefinitions.forEach(funcDefinition -> funcDefinition.accept(this, param));
         return null;
     }
@@ -86,7 +89,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void,Void> {
     *   <' * > type.toString() ID <(offset> varDefinition.offset <)>
     */
     public Void visit(VariableDefinition variableDefinition, Void param){
-        String comment = String.format("' * %s %s (offset %d)",
+        String comment = String.format("\t' * %s %s (offset %d)",
                 variableDefinition.getType().toString(), variableDefinition.getName(), variableDefinition.getOffset());
         cg.addLineOfCode(comment);
         return null;
@@ -114,7 +117,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void,Void> {
         }
 
         funcDefinition.getStatements().forEach(statement -> {
-            cg.addLineOfCode("\n");
+            cg.newLine();
             cg.addLineOfCode("#line\t"+statement.getLine());
             statement.accept(cg.getExecuteCGVisitor(),param);
         });

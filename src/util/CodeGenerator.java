@@ -36,6 +36,14 @@ public class CodeGenerator {
             }
         }
     }
+    public void newLine(){
+        try{
+            outputFile.write("\n");
+            outputFile.flush();
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+    }
 
     private static AddressCGVisitor addressCGVisitor;
     private static ValueCGVisitor valueCGVisitor;
