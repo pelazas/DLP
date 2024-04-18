@@ -108,4 +108,27 @@ public class CharacterType extends AbstractType{
     public int getNumberOfBytes(){
         return 1;
     }
+    @Override
+    public String suffix(){
+        return "b";
+    }
+    @Override
+    public String convertTo(Type type){
+        if(type instanceof IntegerType) return "b2i";
+        else if (type instanceof CharacterType) return "";
+        else if (type instanceof DoubleType) return "b2i\ni2f";
+        else {
+            assert false;
+            return "";
+        }
+    }
+    @Override
+    public Type superType(){
+        return new IntegerType(getLine(), getColumn());
+    }
+
+    @Override
+    public String toString(){
+        return "CharacterType";
+    }
 }

@@ -9,6 +9,10 @@ public class IntLiteral extends AbstractExpression {
         this.value = value;
     }
 
+    public int getValue(){
+        return this.value;
+    }
+
     @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
         return visitor.visit(this,parameter);

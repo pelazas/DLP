@@ -13,6 +13,9 @@ public class Arithmetic extends AbstractExpression{
         this.right = right;
     }
 
+    public String getOperator(){
+        return this.operator;
+    }
     public Expression getRight() {
         return right;
     }

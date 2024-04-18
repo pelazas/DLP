@@ -95,5 +95,20 @@ public abstract class AbstractType extends AbstractASTNode implements Type {
         assert false;
         return 0;
     }
+    @Override
+    public String suffix(){
+        assert false;
+        return "";
+    }
+    @Override
+    public String convertTo(Type type){
+        assert false;
+        return "";
+    }
+    @Override
+    public Type superType(){
+        assert false;
+        return null;
+    }
 
 }

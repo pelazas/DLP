@@ -21,6 +21,9 @@ public class Comparison extends AbstractExpression{
         return left;
     }
 
+    public String getOperator(){
+        return this.operator;
+    }
     @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
         return visitor.visit(this,parameter);

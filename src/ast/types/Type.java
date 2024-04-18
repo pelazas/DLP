@@ -36,4 +36,7 @@ public interface Type extends ASTNode {
     Type dot(String name, int line, int column);
 
     int getNumberOfBytes();
+    String suffix();
+    String convertTo(Type type);
+    Type superType();
 }

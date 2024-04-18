@@ -20,6 +20,9 @@ public class LogicalOperator extends AbstractExpression{
     public Expression getLeft() {
         return left;
     }
+    public String getOperator(){
+        return this.operator;
+    }
 
     @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {

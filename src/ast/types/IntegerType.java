@@ -133,4 +133,22 @@ public class IntegerType extends AbstractType{
     public int getNumberOfBytes(){
         return 2;
     }
+    @Override
+    public String suffix(){
+        return "i";
+    }
+    @Override
+    public String convertTo(Type type){
+        if(type instanceof IntegerType) return "";
+        else if (type instanceof DoubleType) return "i2f";
+        else {
+            assert false;
+            return "";
+        }
+    }
+    @Override
+    public Type superType(){
+        return this;
+    }
+
 }

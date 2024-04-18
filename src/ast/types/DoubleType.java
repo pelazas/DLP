@@ -94,5 +94,25 @@ public class DoubleType extends AbstractType{
     public int getNumberOfBytes(){
         return 4;
     }
+    @Override
+    public String suffix(){
+        return "f";
+    }
+    @Override
+    public String convertTo(Type type){
+        if(type instanceof DoubleType) return "";
+        else {
+            assert false;
+            return "";
+        }
+    }
+    @Override
+    public Type superType(){
+        return this;
+    }
 
+    @Override
+    public String toString(){
+        return "DoubleType";
+    }
 }

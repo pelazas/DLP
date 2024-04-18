@@ -8,6 +8,9 @@ public class CharacterLiteral extends AbstractExpression{
         super(line, column);
         this.value = value;
     }
+    public char getValue(){
+        return this.value;
+    }
 
     @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
