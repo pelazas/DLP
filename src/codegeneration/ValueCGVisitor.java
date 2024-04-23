@@ -227,4 +227,26 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
         cg.addLineOfCode("not");
         return null;
     }
+
+    /*
+    * value[[Indexing: expression1 -> expression2 expression3]]
+    *   address[[expression1]]
+    *   <load> expression1.type.suffix()
+    */
+    public Void visit(Indexing indexing, Void param){
+        indexing.getArray().accept(cg.getAddressCGVisitor(),param);
+        cg.addLineOfCode("load"+indexing.getType().suffix());
+        return null;
+    }
+
+    /*
+    * value[[FieldAccess: expression1 -> expression2 ID]]
+    *   address[[expression1]]
+    *   <load> expression1.type.suffix()
+    */
+    public Void visit(FieldAccess fieldAccess, Void param){
+        fieldAccess.getExpression().accept(cg.getAddressCGVisitor(), param);
+        cg.addLineOfCode("load"+fieldAccess.getType().suffix());
+        return null;
+    }
 }

@@ -1,6 +1,7 @@
 package ast.types;
 
 import ast.AbstractASTNode;
+import ast.definitions.Definition;
 import ast.errorhandler.ErrorHandler;
 
 import java.util.List;
@@ -109,6 +110,12 @@ public abstract class AbstractType extends AbstractASTNode implements Type {
     public Type superType(){
         assert false;
         return null;
+    }
+
+    @Override
+    public int getFieldOffset(String name){
+        assert false;
+        return 0;
     }
 
 }

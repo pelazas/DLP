@@ -1,6 +1,7 @@
 package ast.types;
 
 import ast.ASTNode;
+import ast.definitions.Definition;
 
 import java.util.List;
 
@@ -39,4 +40,5 @@ public interface Type extends ASTNode {
     String suffix();
     String convertTo(Type type);
     Type superType();
+    int getFieldOffset(String name);
 }

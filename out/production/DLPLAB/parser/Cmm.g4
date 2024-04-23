@@ -135,7 +135,8 @@ returnType returns[Type ast]:
         | t1='void' {$ast = new VoidType($t1.getLine(), $t1.getCharPositionInLine()+1);}
         ;
 structFields returns[List<StructFieldType> ast = new ArrayList<>()]:
-        (t1=type ID ';' {$ast.add(new StructFieldType($t1.ast.getLine(), $t1.ast.getColumn(), $t1.ast, $ID.text));} )*
+        (t1=type n1=ID {$ast.add(new StructFieldType($t1.ast.getLine(), $t1.ast.getColumn(), $t1.ast, $n1.text));}
+            (',' n2=ID {$ast.add(new StructFieldType($t1.ast.getLine(), $t1.ast.getColumn(), $t1.ast, $n2.text));}  )*';'  )*
         ;
 
 fragment

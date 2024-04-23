@@ -30,10 +30,12 @@ public class Main {
 		}
 		Program ast = parser.program().ast;
 
+		String fileName = args[0];
+
 		ast.accept(new IdentificationVisitor(), null);
 		ast.accept(new TypeCheckingVisitor(), null);
 		ast.accept(new OffsetVisitor(), null);
-		ast.accept(new ExecuteCGVisitor(CodeGenerator.getInstance()), null);
+		ast.accept(new ExecuteCGVisitor(CodeGenerator.getInstance(fileName)), null);
 
 		if(ErrorHandler.getInstance().anyErrors()){
 			ErrorHandler.getInstance().showErrors(System.err);

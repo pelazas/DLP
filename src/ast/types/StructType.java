@@ -1,5 +1,6 @@
 package ast.types;
 
+import ast.definitions.Definition;
 import ast.errorhandler.ErrorHandler;
 import semantic.visitor.Visitor;
 
@@ -28,6 +29,17 @@ public class StructType extends AbstractType {
             }
         }
         return false;
+    }
+
+    @Override
+    public int getFieldOffset(String name){
+        for(StructFieldType field: structFields){
+            if(field.getName().equals(name)){
+                return field.getOffset();
+            }
+        }
+        assert false;
+        return 0;
     }
 
     public List<StructFieldType> getStructFields(){

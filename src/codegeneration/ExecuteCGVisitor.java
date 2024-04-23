@@ -3,10 +3,9 @@ package codegeneration;
 import ast.Program;
 import ast.definitions.FuncDefinition;
 import ast.definitions.VariableDefinition;
-import ast.statements.Assignment;
-import ast.statements.Read;
-import ast.statements.Write;
+import ast.statements.*;
 import ast.types.FunctionType;
+import ast.types.VoidType;
 import util.CodeGenerator;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,6 +120,10 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void,Void> {
             cg.addLineOfCode("#line\t"+statement.getLine());
             statement.accept(cg.getExecuteCGVisitor(),param);
         });
+
+        if(funcDefinition.getFunctionType().getReturnType() instanceof VoidType){
+            // TODO
+        }
         return null;
     }
 
@@ -133,4 +136,53 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void,Void> {
             functionType.getVariableDefinitions().forEach(variableDefinition -> variableDefinition.accept(cg.getExecuteCGVisitor(),param));
         return null;
     }
+
+    /*
+    * execute[[WhileStmt: statement -> expression statement*]] =
+    *   String conditionLabel = cg.nextLabel()
+    *   String exitLabel = cg.nextLabel()
+    *   conditionLabel<:>
+    *   value[[expression]]
+    *   <jz > exitLabel
+    *   statement*.forEach(stmt -> execute[[stmt]]);
+	*   jmp condLabel
+	*   exitLabel<:>
+    */
+    public Void visit(While whileStmt, Void param){
+        String conditionLabel = cg.nextLabel();
+        String exitLabel = cg.nextLabel();
+        cg.addLineOfCode(conditionLabel+":");
+        whileStmt.getWhileCondition().accept(cg.getValueCGVisitor(), param);
+        cg.addLineOfCode("jz " + exitLabel);
+        whileStmt.getWhileBody().forEach(statement -> statement.accept(cg.getExecuteCGVisitor(), param));
+        cg.addLineOfCode("jmp "+conditionLabel);
+        cg.addLineOfCode(exitLabel+":");
+        return null;
+    }
+
+    /*
+    * execute[[IfElse: statement1 -> expression statement2* statement3*]]
+    *   String elseLabel = cg.nextLabel();
+    *   String exitLabel = cg.nextLabel();
+    *   value[[expression]]
+    *   <jz > elseLabel
+    *   statement2*.forEach(stmt -> execute[[stmt]]);
+    *   <jmp > exitLabel
+    *   elseLabel<:>
+    *   statement3*.forEach(stmt -> execute[[stmt]]);
+    *   exitLabel<:>
+    */
+    public Void visit(IfElse whileStmt, Void param){
+        String elseLabel = cg.nextLabel();
+        String exitLabel = cg.nextLabel();
+        whileStmt.getIfCondition().accept(cg.getValueCGVisitor(), param);
+        cg.addLineOfCode("jz "+elseLabel);
+        whileStmt.getIfBody().forEach(statement -> statement.accept(cg.getExecuteCGVisitor(),param));
+        cg.addLineOfCode("jmp "+exitLabel);
+        cg.addLineOfCode(elseLabel+":");
+        whileStmt.getElseBody().forEach(statement -> statement.accept(cg.getExecuteCGVisitor(), param));
+        cg.addLineOfCode(exitLabel+":");
+        return null;
+    }
+
 }

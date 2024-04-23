@@ -10,20 +10,35 @@ import java.io.IOException;
 public class CodeGenerator {
     private static CodeGenerator cg;
     private FileWriter outputFile;
+    private String sourceFile;
 
-    private CodeGenerator(){
+    private int labelCounter = 0;
+
+    private CodeGenerator(String sourceFile){
         try{
             outputFile = new FileWriter("output.txt", false);
+            this.sourceFile = sourceFile;
+            addSource();
         } catch(IOException e){
             e.printStackTrace();
         }
     }
 
-    public static CodeGenerator getInstance(){
+    public static CodeGenerator getInstance(String source){
         if(cg == null){
-            cg = new CodeGenerator();
+            cg = new CodeGenerator(source);
         }
         return cg;
+    }
+
+    private void addSource(){
+        try {
+            outputFile.write("#source " + "\"" + sourceFile+"\"");
+            outputFile.write("\n");
+            outputFile.flush();
+        } catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     public void addLineOfCode(String line){
@@ -61,4 +76,7 @@ public class CodeGenerator {
         return executeCGVisitor;
     }
 
+    public String nextLabel() {
+        return "label"+labelCounter;
+    }
 }
