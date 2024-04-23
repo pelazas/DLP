@@ -77,6 +77,7 @@ public class CodeGenerator {
     }
 
     public String nextLabel() {
+        labelCounter++;
         return "label"+labelCounter;
     }
 }

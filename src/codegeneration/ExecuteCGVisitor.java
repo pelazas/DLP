@@ -122,7 +122,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void,Void> {
         });
 
         if(funcDefinition.getFunctionType().getReturnType() instanceof VoidType){
-            // TODO
+            // TODO add ret
         }
         return null;
     }
