@@ -249,4 +249,13 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
         cg.addLineOfCode("load"+fieldAccess.getType().suffix());
         return null;
     }
+
+    /*
+    * value[[FunctionInvocation: expression1 -> expression2 expression3*]] =
+    *   expression3.forEach(exp -> value[[exp]]);
+    *   <call > expression2.name
+    */
+    public Void visit(FunctionInvocation functionInvocation, Void param){
+        return null;
+    }
 }

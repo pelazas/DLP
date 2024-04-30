@@ -1,219 +1,163 @@
 #source "input.txt"
 ' * Global variables
-	' * ArrayType [of:DoubleType, size:10] v (offset 0)
+	' * IntegerType i (offset 0)
+	' * IntegerType n (offset 2)
+	' * IntegerType j (offset 4)
+	' * CharacterType c (offset 6)
+	' * ast.types.StructType@880ec60 pair (offset 7)
+	' * ArrayType [of:ArrayType [of:IntegerType, size:10], size:10] matrix (offset 10)
 
 ' Invocation to the main function
 call main
 halt
 
-main:
+p:
 ' * Parameters:
 ' * Local variables:
-	' * DoubleType value (offset -4)
-	' * IntegerType i (offset -6)
-	' * IntegerType j (offset -8)
-	' * ArrayType [of:ArrayType [of:IntegerType, size:5], size:4] w (offset -48)
-	' * ast.types.StructType@7a5d012c date (offset -54)
-enter 54
+ret 0, 0, 0
+f:
+' * Parameters:
+	' * DoubleType r (offset 6)
+	' * IntegerType e (offset 4)
+' * Local variables:
+	' * DoubleType real (offset -4)
+	' * CharacterType c (offset -5)
+enter 5
 
-#line	13
-' * Read
-pusha -54
-loadi
-ini
-storei
-
-#line	14
-pusha -54
-pushi 4
-addi
-pushb 97
+#line	17
+pusha -4
+pusha 7
+loadb
 b2i
-storei
-
-#line	15
-pusha -54
-pushi 2
-addi
-pusha -54
-loadi
-pusha -54
-loadi
-muli
-pushi 12
-modi
-pushi 1
-addi
-storei
-
-#line	16
-' * Write
-pusha -54
-loadi
-outi
-
-#line	16
-' * Write
-pushb 10
-outb
-
-#line	16
-' * Write
-pusha -54
-loadi
-outi
-
-#line	16
-' * Write
-pushb 10
-outb
-
-#line	16
-' * Write
-pusha -54
+i2f
+pusha 7
 loadi
 i2f
-outf
-
-#line	16
-' * Write
-pushb 10
-outb
-
-#line	18
-' * Read
-pusha -4
+addf
+pusha 6
 loadf
-inf
+addf
+pusha 4
+loadi
+i2f
+addf
 storef
 
-#line	20
-pusha -6
+#line	18
+pusha -5
+pushb 48
+storeb
+
+#line	19
+pusha -5
+loadb
+b2i
+ret 2, 5, 4
+fill:
+' * Parameters:
+	' * IntegerType row (offset 8)
+	' * IntegerType value (offset 6)
+	' * IntegerType increment (offset 4)
+' * Local variables:
+	' * IntegerType i (offset -2)
+	' * IntegerType inc (offset -4)
+enter 4
+
+#line	26
+pusha -2
 pushi 0
 storei
 
-#line	21
-label0:
+#line	27
+pusha -4
+pusha 4
+loadi
+storei
+
+#line	28
+label1:
 pushi 10
-pusha -6
+pusha -2
 loadi
 lti
-jz label0
-pusha 0
-pusha -6
+jz label2
+pusha 10
+pusha 8
 loadi
-pushi 4
+pushi 20
 muli
 addi
+pusha -2
+loadi
+pushi 2
+muli
+addi
+pusha 6
+loadi
 pusha -4
-loadf
-storef
+loadi
+addi
+storei
+pusha -2
+pusha -2
+loadi
+pushi 1
+addi
+storei
+pusha -4
+pusha -4
+loadi
+pusha 4
+loadi
+addi
+storei
+jmp label1
+label2:
+ret 0, -4, 4
+show:
+' * Parameters:
+	' * IntegerType row (offset 4)
+' * Local variables:
+	' * IntegerType i (offset -2)
+enter 2
+
+#line	37
+pusha -2
+pushi 0
+storei
+
+#line	38
+label3:
+pushi 10
+pusha -2
+loadi
+lti
+jz label4
 ' * Write
-pusha -6
+pushb 40
+outb
+' * Write
+pusha 4
 loadi
 outi
+' * Write
+pushb 44
+outb
+' * Write
+pusha -2
+loadi
+outi
+' * Write
+pushb 41
+outb
 ' * Write
 pushb 58
 outb
 ' * Write
-pusha 0
-loadf
-outf
-' * Write
-pushb 32
-outb
-pusha -6
+pusha 10
+pusha 4
 loadi
-pushi 2
-modi
-jz label0
-' * Write
-pushb 111
-outb
-' * Write
-pushb 100
-outb
-' * Write
-pushb 100
-outb
-' * Write
-pushb 10
-outb
-jmp label0
-label0:
-' * Write
-pushb 101
-outb
-' * Write
-pushb 118
-outb
-' * Write
-pushb 101
-outb
-' * Write
-pushb 110
-outb
-' * Write
-pushb 10
-outb
-pusha -6
-pusha -6
-loadi
-pushi 1
-addi
-storei
-label0:
-jmp label0
-label0:
-
-#line	30
-' * Write
-pushb 10
-outb
-
-#line	32
-pusha -6
-pushi 0
-storei
-
-#line	33
-label0:
-pushi 4
-pusha -6
-loadi
-lti
-jz label0
-pusha -8
-pushi 0
-storei
-label0:
-pushi 5
-pusha -8
-loadi
-lti
-jz label0
-pusha -48
-pusha -6
-loadi
-pushi 10
-muli
-addi
-pusha -8
-loadi
-pushi 2
-muli
-addi
-pusha -6
-loadi
-pusha -8
-loadi
-addi
-storei
-' * Write
-pusha -48
-pusha -6
-loadi
-pushi 10
+pushi 20
 muli
 addi
 loadi
@@ -221,22 +165,102 @@ outi
 ' * Write
 pushb 32
 outb
-pusha -8
-pusha -8
+pusha -2
+pusha -2
 loadi
 pushi 1
 addi
 storei
-jmp label0
-label0:
+jmp label3
+label4:
+
+#line	42
 ' * Write
 pushb 10
 outb
-pusha -6
-pusha -6
+ret 0, -2, 4
+main:
+' * Parameters:
+' * Local variables:
+	' * IntegerType i (offset -2)
+enter 2
+
+#line	50
+call p
+
+#line	51
+pusha -2
+pushi 0
+storei
+
+#line	52
+pusha 7
+pushi 2
+addi
+pushb 48
+storeb
+
+#line	53
+pusha 7
+pushi 0
+addi
+pushb 48
+b2i
+storei
+
+#line	54
+' * Write
+outi
+
+#line	54
+' * Write
+pushb 10
+outb
+
+#line	56
+pushf 1.3
+pushi 2
+call f
+popi
+
+#line	58
+pusha -2
+pushi 0
+storei
+
+#line	59
+pusha 4
+pushi 0
+storei
+
+#line	60
+label5:
+pushi 10
+pusha -2
+loadi
+lti
+jz label6
+pusha -2
+loadi
+pusha 4
+loadi
+pushi 1
+call fill
+pusha -2
+loadi
+call show
+pusha -2
+pusha -2
 loadi
 pushi 1
 addi
 storei
-jmp label0
-label0:
+pusha 4
+pusha -2
+loadi
+pushi 10
+muli
+storei
+jmp label5
+label6:
+ret 0, -2, 0
