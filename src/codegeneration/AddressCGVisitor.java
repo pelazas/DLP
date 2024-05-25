@@ -16,12 +16,24 @@ public class AddressCGVisitor extends AbstractCGVisitor<Void, Void> {
 
     /*
      * address[[Variable: expression1 -> ID]] =
-     *   <pusha > exp.definition.offset
+     *   if(exp.definition.scope == 0)
+     *      <pusha > exp.definition.offset
+     *   else {
+     *      <push bp>
+     *      <pushi > exp.definition.offset
+     *      <addi>
+     *   }
      */
     @Override
     public Void visit(Variable variable, Void param){
         VariableDefinition definition = (VariableDefinition) variable.getDefinition();
-        cg.addLineOfCode("pusha " + definition.getOffset());
+        if(definition.getScope() == 0)
+            cg.addLineOfCode("pusha " + definition.getOffset());
+        else {
+            cg.addLineOfCode("push bp");
+            cg.addLineOfCode("pushi " + definition.getOffset());
+            cg.addLineOfCode("addi");
+        }
         return null;
     }
 

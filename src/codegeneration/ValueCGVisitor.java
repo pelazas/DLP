@@ -245,7 +245,7 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
     *   <load> expression1.type.suffix()
     */
     public Void visit(FieldAccess fieldAccess, Void param){
-        fieldAccess.getExpression().accept(cg.getAddressCGVisitor(), param);
+        fieldAccess.accept(cg.getAddressCGVisitor(), param);
         cg.addLineOfCode("load"+fieldAccess.getType().suffix());
         return null;
     }
@@ -256,6 +256,8 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
     *   <call > expression2.name
     */
     public Void visit(FunctionInvocation functionInvocation, Void param){
+        functionInvocation.getExpressions().forEach(argument -> argument.accept(cg.getValueCGVisitor(), param));
+        cg.addLineOfCode("call " + functionInvocation.getVariable().getName());
         return null;
     }
 }

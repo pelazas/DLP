@@ -49,6 +49,6 @@ public class ArrayType extends AbstractType{
 
     @Override
     public String toString() {
-        return "ArrayType [of:" + type + ", size:" + size + "]";
+        return "[" + size + ", " + type.toString() + "]";
     }
 }

@@ -27,7 +27,10 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ReturnArgumentsDTO,Void>
     *   <store> expression1.type.suffix()
     */
     public Void visit(Read read, ReturnArgumentsDTO param){
+        cg.newLine();
+        cg.addLineOfCode("#line\t" + read.getLine());
         cg.addLineOfCode("' * Read");
+
         read.getExpression().accept(cg.getValueCGVisitor(), null);
         cg.addLineOfCode("in"+read.getExpression().getType().suffix());
         cg.addLineOfCode("store" + read.getExpression().getType().suffix());
@@ -42,7 +45,10 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ReturnArgumentsDTO,Void>
     */
     @Override
     public Void visit(Write write, ReturnArgumentsDTO param){
+        cg.newLine();
+        cg.addLineOfCode("#line\t" + write.getLine());
         cg.addLineOfCode("' * Write");
+
         write.getExpression().accept(cg.getValueCGVisitor(), null);
         cg.addLineOfCode("out" + write.getExpression().getType().suffix());
         return null;
@@ -55,6 +61,10 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ReturnArgumentsDTO,Void>
     *   <store> expression1.type.suffix()
     */
     public Void visit(Assignment assignment, ReturnArgumentsDTO param){
+        cg.newLine();
+        cg.addLineOfCode("#line\t" + assignment.getLine());
+        cg.addLineOfCode("' * Assignment");
+
         assignment.getLeft().accept(cg.getAddressCGVisitor(), null);
         assignment.getRight().accept(cg.getValueCGVisitor(), null);
         cg.addLineOfCode("store" + assignment.getLeft().getType().suffix());
@@ -111,35 +121,43 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ReturnArgumentsDTO,Void>
     *       <enter > -(varDefinition*.get(varDefinition*.size()-1).offset)
     */
     public Void visit(FuncDefinition funcDefinition, ReturnArgumentsDTO param){
+        cg.newLine();
+        cg.addLineOfCode("#line\t" + funcDefinition.getLine());
+
         cg.addLineOfCode(funcDefinition.getName() + ":");
         cg.addLineOfCode("' * Parameters:");
         funcDefinition.getFunctionType().accept(this, null);
         cg.addLineOfCode("' * Local variables:");
         funcDefinition.getVariableDefinitions().forEach(variableDefinition -> variableDefinition.accept(this, null));
+
         if(funcDefinition.getVariableDefinitions().size()>0){
             int functionSizeAllocation = -(funcDefinition.getVariableDefinitions().get(funcDefinition.getVariableDefinitions().size()-1).getOffset());
             cg.addLineOfCode("enter " + functionSizeAllocation);
         }
 
-        int bytesReturn = !(funcDefinition.getFunctionType().getReturnType() instanceof VoidType) ? funcDefinition.getFunctionType().getReturnType().getNumberOfBytes() : 0;
-        int bytesLocals = !funcDefinition.getVariableDefinitions().isEmpty() ?
-                funcDefinition.getVariableDefinitions().get(funcDefinition.getVariableDefinitions().size()-1).getOffset()
+        int bytesReturn = !(funcDefinition.getFunctionType().getReturnType() instanceof VoidType)
+                ? funcDefinition.getFunctionType().getReturnType().getNumberOfBytes()
                 : 0;
 
-        int bytesArgs = !funcDefinition.getFunctionType().getVariableDefinitions().isEmpty() ?
-                funcDefinition.getFunctionType().getVariableDefinitions().get(funcDefinition.getFunctionType().getVariableDefinitions().size()-1).getOffset() :
-                0;
+        int bytesLocals = !funcDefinition.getVariableDefinitions().isEmpty()
+                ? funcDefinition.getVariableDefinitions().get(funcDefinition.getVariableDefinitions().size()-1).getOffset()
+                : 0;
+
+        int bytesArgs = !funcDefinition.getFunctionType().getVariableDefinitions().isEmpty()
+                //? funcDefinition.getFunctionType().getVariableDefinitions().get(funcDefinition.getFunctionType().getVariableDefinitions().size()-1).getOffset()
+                ? funcDefinition.getFunctionType().getVariableDefinitions().stream().mapToInt(variableDefinition -> variableDefinition.getType().getNumberOfBytes()).sum()
+                : 0;
 
         ReturnArgumentsDTO dto = new ReturnArgumentsDTO(bytesReturn, -bytesLocals, bytesArgs);
 
         funcDefinition.getStatements().forEach(statement -> {
             cg.newLine();
-            cg.addLineOfCode("#line\t"+statement.getLine());
+            //cg.addLineOfCode("#line\t"+statement.getLine());
             statement.accept(cg.getExecuteCGVisitor(), dto);
         });
 
         if(funcDefinition.getFunctionType().getReturnType() instanceof VoidType){
-            cg.addLineOfCode("ret "+ bytesReturn + ", " + bytesLocals + ", " +bytesArgs);
+            cg.addLineOfCode("ret "+ bytesReturn + ", " + -bytesLocals + ", " +bytesArgs);
         }
         return null;
     }
@@ -210,6 +228,10 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ReturnArgumentsDTO,Void>
     * anytime you traverse execute with statements pass these 3 parameters
     */
     public Void visit(Return retStatement, ReturnArgumentsDTO param){
+        cg.newLine();
+        cg.addLineOfCode("#line\t" + retStatement.getLine());
+        cg.addLineOfCode("' * Return");
+
         retStatement.getExpression().accept(cg.getValueCGVisitor(), null);
         cg.addLineOfCode("ret " + param.getBytesReturn() + ", " + param.getBytesLocals() + ", " + param.getBytesArgs());
         return null;
@@ -226,6 +248,8 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ReturnArgumentsDTO,Void>
     */
     public Void visit(FunctionInvocation functionInvocation, ReturnArgumentsDTO param){
         functionInvocation.getExpressions().forEach(expression -> expression.accept(cg.getValueCGVisitor(), null));
+        cg.newLine();
+        cg.addLineOfCode("#line\t" + functionInvocation.getLine());
         cg.addLineOfCode("call " + functionInvocation.getVariable().getName());
         Type returnType = ((FunctionType) functionInvocation.getVariable().getDefinition().getType()).getReturnType();
         if(!(returnType instanceof VoidType)){

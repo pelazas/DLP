@@ -6,6 +6,7 @@ import semantic.visitor.Visitor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StructType extends AbstractType {
 
@@ -69,5 +70,12 @@ public class StructType extends AbstractType {
     @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP parameter) {
         return visitor.visit(this,parameter);
+    }
+
+    @Override
+    public String toString(){
+        String structFieldsString = structFields.stream().map(structFieldType -> structFieldType.toString()).collect(Collectors.joining(", "));
+
+        return "record("+ structFieldsString +")";
     }
 }

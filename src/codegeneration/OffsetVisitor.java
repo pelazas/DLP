@@ -65,7 +65,6 @@ public class OffsetVisitor extends AbstractVisitor<Void, Void> {
             VariableDefinition var = functionType.getVariableDefinitions().get(i);
             var.accept(this,null);
             var.setOffset(4 + paramsBytesSum);
-            System.out.println(var.getOffset());
             paramsBytesSum += var.getType().getNumberOfBytes();
         }
         return null;
