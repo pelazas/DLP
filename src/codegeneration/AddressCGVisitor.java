@@ -10,8 +10,15 @@ import util.CodeGenerator;
 
 public class AddressCGVisitor extends AbstractCGVisitor<Void, Void> {
 
+    private CodeGenerator cg;
+    private ValueCGVisitor valueCGVisitor;
+
     public AddressCGVisitor(CodeGenerator cg) {
-        super(cg);
+        this.cg = cg;
+    }
+
+    public void setValueCGVisitor(ValueCGVisitor valueCGVisitor){
+        this.valueCGVisitor = valueCGVisitor;
     }
 
     /*

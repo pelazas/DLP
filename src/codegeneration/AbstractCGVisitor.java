@@ -12,12 +12,6 @@ import util.CodeGenerator;
 
 public abstract class AbstractCGVisitor<TP,TR> implements Visitor<TP,TR> {
 
-    protected CodeGenerator cg;
-
-    public AbstractCGVisitor(CodeGenerator cg){
-        this.cg = cg;
-    }
-
     @Override
     public TR visit(Arithmetic arithmetic, TP param){
         throw new IllegalStateException("Code generation not defined for Arithmetic");

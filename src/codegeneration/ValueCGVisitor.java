@@ -5,8 +5,14 @@ import ast.types.Type;
 import util.CodeGenerator;
 
 public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
+    private CodeGenerator cg;
+    private AddressCGVisitor addressCGVisitor;
     public ValueCGVisitor(CodeGenerator cg) {
-        super(cg);
+        this.cg = cg;
+    }
+
+    public void setAddressCGVisitor(AddressCGVisitor addressCGVisitor){
+        this.addressCGVisitor = addressCGVisitor;
     }
 
     /*
@@ -234,7 +240,7 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
     *   <load> expression1.type.suffix()
     */
     public Void visit(Indexing indexing, Void param){
-        indexing.getArray().accept(cg.getAddressCGVisitor(),param);
+        indexing.accept(cg.getAddressCGVisitor(),param);
         cg.addLineOfCode("load"+indexing.getType().suffix());
         return null;
     }

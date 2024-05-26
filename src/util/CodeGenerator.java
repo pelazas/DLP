@@ -8,13 +8,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class CodeGenerator {
-    private static CodeGenerator cg;
     private FileWriter outputFile;
     private String sourceFile;
-
     private int labelCounter = 0;
 
-    private CodeGenerator(String sourceFile){
+    public CodeGenerator(String sourceFile){
         try{
             outputFile = new FileWriter("output.txt", false);
             this.sourceFile = sourceFile;
@@ -22,13 +20,6 @@ public class CodeGenerator {
         } catch(IOException e){
             e.printStackTrace();
         }
-    }
-
-    public static CodeGenerator getInstance(String source){
-        if(cg == null){
-            cg = new CodeGenerator(source);
-        }
-        return cg;
     }
 
     private void addSource(){

@@ -113,7 +113,7 @@ arguments returns [List<Expression> ast = new ArrayList<>()]:
         |
         ;
 block returns[List<Statement> ast = new ArrayList<>()]:
-         (s1=statement {$ast.addAll($s1.ast);} )*
+         (s1=statement {$ast.addAll($s1.ast);} )
         | '{' (s1=statement {$ast.addAll($s1.ast);} )* '}'
         ;
 

@@ -101,6 +101,7 @@ public class DoubleType extends AbstractType{
     @Override
     public String convertTo(Type type){
         if(type instanceof DoubleType) return "";
+        else if(type instanceof IntegerType) return "f2i";
         else {
             assert false;
             return "";

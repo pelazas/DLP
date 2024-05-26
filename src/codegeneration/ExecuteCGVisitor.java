@@ -15,8 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExecuteCGVisitor extends AbstractCGVisitor<ReturnArgumentsDTO,Void> {
+
+    private CodeGenerator cg;
+    private AddressCGVisitor addressCGVisitor;
+    private ValueCGVisitor valueCGVisitor;
     public ExecuteCGVisitor(CodeGenerator cg) {
-        super(cg);
+        this.cg = cg;
+        this.addressCGVisitor = new AddressCGVisitor(cg);
+        this.valueCGVisitor = new ValueCGVisitor(cg);
+        this.addressCGVisitor.setValueCGVisitor(valueCGVisitor);
+        this.valueCGVisitor.setAddressCGVisitor(addressCGVisitor);
     }
 
     /*
@@ -151,8 +159,6 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ReturnArgumentsDTO,Void>
         ReturnArgumentsDTO dto = new ReturnArgumentsDTO(bytesReturn, -bytesLocals, bytesArgs);
 
         funcDefinition.getStatements().forEach(statement -> {
-            cg.newLine();
-            //cg.addLineOfCode("#line\t"+statement.getLine());
             statement.accept(cg.getExecuteCGVisitor(), dto);
         });
 
@@ -179,11 +185,15 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ReturnArgumentsDTO,Void>
     *   conditionLabel<:>
     *   value[[expression]]
     *   <jz > exitLabel
-    *   statement*.forEach(stmt -> execute[[stmt]]);
+    *   statement*.forEach(stmt -> execute[[stmt]](bytesReturn, bytesLocals, bytesParams));
 	*   jmp condLabel
 	*   exitLabel<:>
     */
     public Void visit(While whileStmt, ReturnArgumentsDTO param){
+        cg.newLine();
+        cg.addLineOfCode("#line\t" + whileStmt.getLine());
+        cg.addLineOfCode("' * While");
+
         String conditionLabel = cg.nextLabel();
         String exitLabel = cg.nextLabel();
         cg.addLineOfCode(conditionLabel+":");
@@ -247,10 +257,11 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ReturnArgumentsDTO,Void>
     *   }
     */
     public Void visit(FunctionInvocation functionInvocation, ReturnArgumentsDTO param){
-        functionInvocation.getExpressions().forEach(expression -> expression.accept(cg.getValueCGVisitor(), null));
         cg.newLine();
         cg.addLineOfCode("#line\t" + functionInvocation.getLine());
+        functionInvocation.getExpressions().forEach(expression -> expression.accept(cg.getValueCGVisitor(), null));
         cg.addLineOfCode("call " + functionInvocation.getVariable().getName());
+
         Type returnType = ((FunctionType) functionInvocation.getVariable().getDefinition().getType()).getReturnType();
         if(!(returnType instanceof VoidType)){
             cg.addLineOfCode("pop" + returnType.suffix());

@@ -141,6 +141,7 @@ public class IntegerType extends AbstractType{
     public String convertTo(Type type){
         if(type instanceof IntegerType) return "";
         else if (type instanceof DoubleType) return "i2f";
+        else if (type instanceof CharacterType) return "i2b";
         else {
             assert false;
             return "";

@@ -35,7 +35,7 @@ public class Main {
 		ast.accept(new IdentificationVisitor(), null);
 		ast.accept(new TypeCheckingVisitor(), null);
 		ast.accept(new OffsetVisitor(), null);
-		ast.accept(new ExecuteCGVisitor(CodeGenerator.getInstance(fileName)), null);
+		ast.accept(new ExecuteCGVisitor(new CodeGenerator(fileName)), null);
 
 		if(ErrorHandler.getInstance().anyErrors()){
 			ErrorHandler.getInstance().showErrors(System.err);

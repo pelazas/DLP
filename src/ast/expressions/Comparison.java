@@ -6,7 +6,7 @@ public class Comparison extends AbstractExpression{
     private String operator;
     private Expression right;
     private Expression left;
-    public Comparison(int line, int column, String operator, Expression right, Expression left) {
+    public Comparison(int line, int column, String operator, Expression left, Expression right) {
         super(line, column);
         this.left = left;
         this.operator = operator;
