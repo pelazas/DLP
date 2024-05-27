@@ -54,8 +54,8 @@ public class AddressCGVisitor extends AbstractCGVisitor<Void, Void> {
     */
     @Override
     public Void visit(Indexing indexing, Void param){
-        indexing.getArray().accept(cg.getAddressCGVisitor(),param);
-        indexing.getIndex().accept(cg.getValueCGVisitor(), param);
+        indexing.getArray().accept(this,param);
+        indexing.getIndex().accept(this.valueCGVisitor, param);
         cg.addLineOfCode("pushi "+ indexing.getType().getNumberOfBytes());
         cg.addLineOfCode("muli");
         cg.addLineOfCode("addi");
@@ -70,7 +70,7 @@ public class AddressCGVisitor extends AbstractCGVisitor<Void, Void> {
      */
     @Override
     public Void visit(FieldAccess fieldAccess, Void param){
-        fieldAccess.getExpression().accept(cg.getAddressCGVisitor(), param);
+        fieldAccess.getExpression().accept(this, param);
         cg.addLineOfCode("pushi "+((StructType) fieldAccess.getExpression().getType()).getFieldOffset(fieldAccess.getName()));
         cg.addLineOfCode("addi");
         return null;

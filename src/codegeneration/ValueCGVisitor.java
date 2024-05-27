@@ -1,6 +1,7 @@
 package codegeneration;
 
 import ast.expressions.*;
+import ast.types.IntegerType;
 import ast.types.Type;
 import util.CodeGenerator;
 
@@ -48,7 +49,7 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
     *   <loadi >
     */
     public Void visit(Variable variable, Void param){
-        variable.accept(cg.getAddressCGVisitor(), param);
+        variable.accept(this.addressCGVisitor, param);
         cg.addLineOfCode("load" + variable.getType().suffix());
         return null;
     }
@@ -79,9 +80,9 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
         Expression left = arithmetic.getLeft();
         Expression right = arithmetic.getRight();
 
-        left.accept(cg.getValueCGVisitor(), param);
+        left.accept(this, param);
         cg.addLineOfCode(left.getType().convertTo(arithmetic.getType()));
-        right.accept(cg.getValueCGVisitor(), param);
+        right.accept(this, param);
         cg.addLineOfCode(right.getType().convertTo(arithmetic.getType()));
 
         switch (arithmetic.getOperator()){
@@ -134,9 +135,9 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
     public Void visit(Comparison comparison, Void param){
         Type superType = comparison.getLeft().getType().superType();
 
-        comparison.getLeft().accept(cg.getValueCGVisitor(), param);
+        comparison.getLeft().accept(this, param);
         comparison.getLeft().getType().convertTo(superType);
-        comparison.getRight().accept(cg.getValueCGVisitor(), param);
+        comparison.getRight().accept(this, param);
         comparison.getRight().getType().convertTo(superType);
 
         switch (comparison.getOperator()){
@@ -176,8 +177,8 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
      *	}
      */
     public Void visit(LogicalOperator logical, Void param){
-        logical.getLeft().accept(cg.getValueCGVisitor(), param);
-        logical.getRight().accept(cg.getValueCGVisitor(), param);
+        logical.getLeft().accept(this, param);
+        logical.getRight().accept(this, param);
         switch(logical.getOperator()){
             case "&&":
                 cg.addLineOfCode("and");
@@ -196,7 +197,7 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
      *   expression2.type.convertTo(type);
      */
     public Void visit(Cast cast, Void param){
-        cast.getExpression().accept(cg.getValueCGVisitor(), param);
+        cast.getExpression().accept(this, param);
         cg.addLineOfCode(cast.getExpression().getType().convertTo(cast.getCastingType()));
         return null;
     }
@@ -213,10 +214,10 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
     public Void visit(Modulus modulus, Void param){
         Type superType = modulus.getLeft().getType().superType();
 
-        modulus.getLeft().accept(cg.getValueCGVisitor(), param);
+        modulus.getLeft().accept(this, param);
         modulus.getLeft().getType().convertTo(superType);
 
-        modulus.getRight().accept(cg.getValueCGVisitor(), param);
+        modulus.getRight().accept(this, param);
         modulus.getRight().getType().convertTo(superType);
 
         cg.addLineOfCode("mod" + superType.suffix());
@@ -229,8 +230,25 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
      *   <not>
      */
     public Void visit(UnaryNot unaryNot, Void param){
-        unaryNot.getExpression().accept(cg.getValueCGVisitor(), param);
+        unaryNot.getExpression().accept(this, param);
         cg.addLineOfCode("not");
+        return null;
+    }
+
+    /*
+     * value[[UnaryMinus: expression1 -> expression2]]
+     *  <pushi> 0
+     *  cg.convertTo(new IntegerType(), expression1.type)
+     *  value[[expression2]]
+     *  cg.convertTo(expression2.type, expression1.type)
+     *  <mul> expression1.type.suffix()
+     */
+    public Void visit(UnaryMinus unaryMinus, Void param){
+        cg.addLineOfCode("pushi 0");
+        cg.convertTo(new IntegerType(unaryMinus.getLine(), unaryMinus.getColumn()), unaryMinus.getType());
+        unaryMinus.getExpression().accept(this, param);
+        cg.convertTo(unaryMinus.getExpression().getType(), unaryMinus.getType());
+        cg.addLineOfCode("sub" + unaryMinus.getType().suffix());
         return null;
     }
 
@@ -240,7 +258,7 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
     *   <load> expression1.type.suffix()
     */
     public Void visit(Indexing indexing, Void param){
-        indexing.accept(cg.getAddressCGVisitor(),param);
+        indexing.accept(this.addressCGVisitor,param);
         cg.addLineOfCode("load"+indexing.getType().suffix());
         return null;
     }
@@ -251,7 +269,7 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
     *   <load> expression1.type.suffix()
     */
     public Void visit(FieldAccess fieldAccess, Void param){
-        fieldAccess.accept(cg.getAddressCGVisitor(), param);
+        fieldAccess.accept(this.addressCGVisitor, param);
         cg.addLineOfCode("load"+fieldAccess.getType().suffix());
         return null;
     }
@@ -262,7 +280,7 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void,Void>{
     *   <call > expression2.name
     */
     public Void visit(FunctionInvocation functionInvocation, Void param){
-        functionInvocation.getExpressions().forEach(argument -> argument.accept(cg.getValueCGVisitor(), param));
+        functionInvocation.getExpressions().forEach(argument -> argument.accept(this, param));
         cg.addLineOfCode("call " + functionInvocation.getVariable().getName());
         return null;
     }

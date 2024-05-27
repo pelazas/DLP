@@ -1,5 +1,9 @@
 package util;
 
+import ast.types.CharacterType;
+import ast.types.DoubleType;
+import ast.types.IntegerType;
+import ast.types.Type;
 import codegeneration.AddressCGVisitor;
 import codegeneration.ExecuteCGVisitor;
 import codegeneration.ValueCGVisitor;
@@ -51,25 +55,37 @@ public class CodeGenerator {
         }
     }
 
-    private static AddressCGVisitor addressCGVisitor;
-    private static ValueCGVisitor valueCGVisitor;
-    private static ExecuteCGVisitor executeCGVisitor;
-    public AddressCGVisitor getAddressCGVisitor(){
-        if(addressCGVisitor == null) addressCGVisitor = new AddressCGVisitor(this);
-        return addressCGVisitor;
-    }
-    public ValueCGVisitor getValueCGVisitor(){
-        if(valueCGVisitor == null) valueCGVisitor = new ValueCGVisitor(this);
-        return valueCGVisitor;
-    }
-    public ExecuteCGVisitor getExecuteCGVisitor(){
-        if(executeCGVisitor == null) executeCGVisitor = new ExecuteCGVisitor(this);
-        return executeCGVisitor;
-    }
-
     public String nextLabel() {
         String labelString = "label"+labelCounter;
         labelCounter++;
         return labelString;
+    }
+
+    public void convertTo(Type from, Type to){
+        try {
+            if (from instanceof IntegerType) {
+                if (to instanceof CharacterType) {
+                    this.outputFile.write("i2b\n");
+                } else if (to instanceof DoubleType) {
+                    this.outputFile.write("i2f\n");
+                }
+            } else if (from instanceof DoubleType) {
+                if (to instanceof IntegerType) {
+                    this.outputFile.write("f2i\n");
+                } else if (to instanceof CharacterType) {
+                    this.outputFile.write("\tf2i");
+                    this.outputFile.write("\ti2b");
+                }
+            } else if (from instanceof CharacterType) {
+                if (to instanceof IntegerType) {
+                    this.outputFile.write("\tb2i");
+                } else if (to instanceof DoubleType) {
+                    this.outputFile.write("\tb2i");
+                    this.outputFile.write("\ti2f");
+                }
+            }
+        } catch(IOException e){
+            e.printStackTrace();
+        }
     }
 }
